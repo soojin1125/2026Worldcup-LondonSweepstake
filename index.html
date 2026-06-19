@@ -179,7 +179,8 @@
 <body>
   <div class="container">
     <h1>🏆 World Cup Sweepstake</h1>
-    
+    <div class="subtitle">Match Results by Team Owner</div>
+
     <h2>Match Results by Team Owner</h2>
     <div class="section-note">
       Showing the latest 8 finished matches first, then all live matches, followed by the next 6 upcoming matches in chronological order.
@@ -264,7 +265,12 @@
       "United States of America": "United States",
       "USA": "United States",
       "Curaçao": "Curacao",
+
+      // Bosnia fix
       "Bosnia and Herzegovina": "Bosnia & Herzegovina",
+      "Bosnia-Herzegovina": "Bosnia & Herzegovina",
+      "Bosnia And Herzegovina": "Bosnia & Herzegovina",
+
       "Cote d'Ivoire": "Côte d’Ivoire",
       "Côte d'Ivoire": "Côte d’Ivoire",
       "Ivory Coast": "Côte d’Ivoire",
@@ -285,7 +291,23 @@
     };
 
     function normalizeCountry(name) {
-      return countryAliases[name] || name;
+      if (!name) return "";
+
+      const cleaned = name.trim();
+
+      if (countryAliases[cleaned]) {
+        return countryAliases[cleaned];
+      }
+
+      if (
+        cleaned === "Bosnia and Herzegovina" ||
+        cleaned === "Bosnia-Herzegovina" ||
+        cleaned === "Bosnia And Herzegovina"
+      ) {
+        return "Bosnia & Herzegovina";
+      }
+
+      return cleaned;
     }
 
     function getOwners(country) {
@@ -308,6 +330,7 @@
       try {
         const d = new Date(utcDate);
         return d.toLocaleString("en-GB", {
+          timeZone: "Europe/London",
           day: "2-digit",
           month: "short",
           hour: "2-digit",
