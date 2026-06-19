@@ -56,7 +56,6 @@
       border-bottom: none;
     }
 
-    /* 핵심: 항상 가운데 score가 오도록 grid 사용 */
     .match-line {
       display: grid;
       grid-template-columns: 1fr auto 1fr;
@@ -70,6 +69,7 @@
       align-items: baseline;
       gap: 6px;
       min-width: 0;
+      flex-wrap: wrap;
     }
 
     .team-left {
@@ -106,6 +106,23 @@
       margin-top: 8px;
       color: #6b7280;
       font-size: 0.9rem;
+    }
+
+    .meta {
+      margin-top: 4px;
+      color: #6b7280;
+      font-size: 0.88rem;
+    }
+
+    .loading,
+    .error,
+    .empty {
+      padding: 18px 0;
+      color: #6b7280;
+    }
+
+    .error {
+      color: #b91c1c;
     }
 
     .cards {
@@ -161,13 +178,23 @@
     <div class="subtitle">Match Results by Team Owner</div>
 
     <h2>Match Results by Team Owner</h2>
-    <div class="box" id="match-results"></div>
+    <div class="box" id="match-results">
+      <div class="loading">Loading World Cup matches...</div>
+    </div>
 
     <h2>Draw Results</h2>
     <div class="cards" id="draw-results"></div>
   </div>
 
   <script>
+    // =========================
+    // 1) CHANGE THIS ONE LINE
+    // =========================
+    const API_TOKEN = "3da31ae0bef3452995c78e09264faa8c";
+
+    // football-data World Cup endpoint
+    const API_URL = "https://api.football-data.org/v4/competitions/WC/matches";
+
     const drawData = [
       { participant: "Alex Haines", country: "Norway" },
       { participant: "Allison Clark", country: "South Africa" },
@@ -195,97 +222,3 @@
       { participant: "Matthew Miller", country: "Türkiye" },
       { participant: "Matthew Miller", country: "Saudi Arabia" },
       { participant: "Nibash Gun", country: "Germany" },
-      { participant: "Nicholas Crowe", country: "Curacao" },
-      { participant: "Nicholas Crowe", country: "Ghana" },
-      { participant: "Niel Du Preez", country: "Brazil" },
-      { participant: "Nikki Foxall", country: "Egypt" },
-      { participant: "Patrick Ahern", country: "Haiti" },
-      { participant: "Peter Benning", country: "Croatia" },
-      { participant: "Peter Benning", country: "Spain" },
-      { participant: "Peter Robinson", country: "Cabo Verde" },
-      { participant: "Peter Robinson", country: "Uzbekistan" },
-      { participant: "Rob McBride", country: "Tunisia" },
-      { participant: "Samuel Davies", country: "Bosnia & Herzegovina" },
-      { participant: "Samuel Davies", country: "Iraq" },
-      { participant: "Sarah Fallon", country: "Côte d’Ivoire" },
-      { participant: "Sean Berry", country: "Czechia" },
-      { participant: "Shayna Gail Velasquez", country: "Sweden" },
-      { participant: "Soojin Choe", country: "Uruguay" },
-      { participant: "Soojin Choe", country: "Portugal" },
-      { participant: "Terry Gell", country: "Korea" },
-      { participant: "Thomas Blunt", country: "New Zealand" },
-      { participant: "Thomas Blunt", country: "Netherlands" },
-      { participant: "Tim Hewer", country: "Algeria" },
-      { participant: "Tim Hewer", country: "Paraguay" }
-    ];
-
-    const sampleMatches = [
-      { homeTeam: "Portugal", awayTeam: "Brazil", homeScore: 2, awayScore: 1, status: "LIVE" },
-      { homeTeam: "Korea", awayTeam: "Uruguay", homeScore: 0, awayScore: 0, status: "HT" },
-      { homeTeam: "Netherlands", awayTeam: "England", homeScore: 1, awayScore: 3, status: "FT" }
-    ];
-
-    function getOwners(country) {
-      const owners = [];
-      for (let i = 0; i < drawData.length; i++) {
-        if (drawData[i].country === country) {
-          owners.push(drawData[i].participant);
-        }
-      }
-      return owners;
-    }
-
-    function renderMatches() {
-      const container = document.getElementById("match-results");
-      let html = "";
-
-      for (let i = 0; i < sampleMatches.length; i++) {
-        const match = sampleMatches[i];
-        const homeOwnerText = getOwners(match.homeTeam).join(", ") || "No owner";
-        const awayOwnerText = getOwners(match.awayTeam).join(", ") || "No owner";
-
-        html += `
-          <div class="match-item">
-            <div class="match-line">
-              <div class="team-left">
-                <span class="team-name">${match.homeTeam}</span>
-                <span class="owner">(${homeOwnerText})</span>
-              </div>
-
-              <div class="score">${match.homeScore} : ${match.awayScore}</div>
-
-              <div class="team-right">
-                <span class="team-name">${match.awayTeam}</span>
-                <span class="owner">(${awayOwnerText})</span>
-              </div>
-            </div>
-            <div class="status">Status: ${match.status}</div>
-          </div>
-        `;
-      }
-
-      container.innerHTML = html;
-    }
-
-    function renderDraws() {
-      const container = document.getElementById("draw-results");
-      let html = "";
-
-      for (let i = 0; i < drawData.length; i++) {
-        const item = drawData[i];
-        html += `
-          <div class="card">
-            <div class="country">${item.country}</div>
-            <div class="participant">${item.participant}</div>
-          </div>
-        `;
-      }
-
-      container.innerHTML = html;
-    }
-
-    renderMatches();
-    renderDraws();
-  </script>
-</body>
-</html>
