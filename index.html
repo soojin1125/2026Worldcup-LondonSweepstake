@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<h1>TEST 123 - World Cup Sweepstake</h1>
+  <title>World Cup Sweepstake</title>
   <style>
     body {
       margin: 0;
@@ -114,15 +114,17 @@
       font-size: 0.88rem;
     }
 
-    .loading,
-    .error,
-    .empty {
+    .message {
       padding: 18px 0;
       color: #6b7280;
     }
 
-    .error {
+    .message.error {
       color: #b91c1c;
+    }
+
+    .message.info {
+      color: #6b7280;
     }
 
     .cards {
@@ -179,7 +181,7 @@
 
     <h2>Match Results by Team Owner</h2>
     <div class="box" id="match-results">
-      <div class="loading">Loading World Cup matches...</div>
+      <div class="message info">Loading World Cup matches...</div>
     </div>
 
     <h2>Draw Results</h2>
@@ -188,9 +190,9 @@
 
   <script>
     // =========================
-    // 1) CHANGE THIS ONE LINE
+    // CHANGE ONLY THIS LINE
     // =========================
-   const API_TOKEN = "PASTE_YOUR_FOOTBALL_DATA_TOKEN_HERE";
+    const API_TOKEN = "3da31ae0bef3452995c78e09264faa8c";
 
     // football-data World Cup endpoint
     const API_URL = "https://api.football-data.org/v4/competitions/WC/matches";
@@ -222,3 +224,314 @@
       { participant: "Matthew Miller", country: "Türkiye" },
       { participant: "Matthew Miller", country: "Saudi Arabia" },
       { participant: "Nibash Gun", country: "Germany" },
+      { participant: "Nicholas Crowe", country: "Curacao" },
+      { participant: "Nicholas Crowe", country: "Ghana" },
+      { participant: "Niel Du Preez", country: "Brazil" },
+      { participant: "Nikki Foxall", country: "Egypt" },
+      { participant: "Patrick Ahern", country: "Haiti" },
+      { participant: "Peter Benning", country: "Croatia" },
+      { participant: "Peter Benning", country: "Spain" },
+      { participant: "Peter Robinson", country: "Cabo Verde" },
+      { participant: "Peter Robinson", country: "Uzbekistan" },
+      { participant: "Rob McBride", country: "Tunisia" },
+      { participant: "Samuel Davies", country: "Bosnia & Herzegovina" },
+      { participant: "Samuel Davies", country: "Iraq" },
+      { participant: "Sarah Fallon", country: "Côte d’Ivoire" },
+      { participant: "Sean Berry", country: "Czechia" },
+      { participant: "Shayna Gail Velasquez", country: "Sweden" },
+      { participant: "Soojin Choe", country: "Uruguay" },
+      { participant: "Soojin Choe", country: "Portugal" },
+      { participant: "Terry Gell", country: "Korea" },
+      { participant: "Thomas Blunt", country: "New Zealand" },
+      { participant: "Thomas Blunt", country: "Netherlands" },
+      { participant: "Tim Hewer", country: "Algeria" },
+      { participant: "Tim Hewer", country: "Paraguay" }
+    ];
+
+    // Fallback sample matches if API fails
+    const fallbackMatches = [
+      { homeTeam: "Portugal", awayTeam: "Brazil", homeScore: 2, awayScore: 1, status: "Live", meta: "Sample data" },
+      { homeTeam: "Korea", awayTeam: "Uruguay", homeScore: 0, awayScore: 0, status: "Half-time", meta: "Sample data" },
+      { homeTeam: "Netherlands", awayTeam: "England", homeScore: 1, awayScore: 3, status: "Finished", meta: "Sample data" }
+    ];
+
+    const countryAliases = {
+      "Korea Republic": "Korea",
+      "Republic of Korea": "Korea",
+      "South Korea": "Korea",
+      "IR Iran": "Iran",
+      "Iran": "Iran",
+      "Türkiye": "Türkiye",
+      "Turkey": "Türkiye",
+      "United States of America": "United States",
+      "USA": "United States",
+      "Curaçao": "Curacao",
+      "Bosnia and Herzegovina": "Bosnia & Herzegovina",
+      "Cote d'Ivoire": "Côte d’Ivoire",
+      "Côte d'Ivoire": "Côte d’Ivoire",
+      "Ivory Coast": "Côte d’Ivoire",
+      "Cape Verde": "Cabo Verde",
+      "DR Congo": "Congo (DRC)",
+      "Congo DR": "Congo (DRC)"
+    };
+
+    const statusLabels = {
+      IN_PLAY: "Live",
+      PAUSED: "Half-time",
+      FINISHED: "Finished",
+      TIMED: "Scheduled",
+      SCHEDULED: "Scheduled",
+      POSTPONED: "Postponed",
+      SUSPENDED: "Suspended",
+      CANCELLED: "Cancelled"
+    };
+
+    function normalizeCountry(name) {
+      return countryAliases[name] || name;
+    }
+
+    function getOwners(country) {
+      const target = normalizeCountry(country);
+      const owners = [];
+      for (let i = 0; i < drawData.length; i++) {
+        if (normalizeCountry(drawData[i].country) === target) {
+          owners.push(drawData[i].participant);
+        }
+      }
+      return owners;
+    }
+
+    function formatStatus(status) {
+      return statusLabels[status] || status || "";
+    }
+
+    function formatKickoff(utcDate) {
+      if (!utcDate) return "";
+      try {
+        const d = new Date(utcDate);
+        return d.toLocaleString("en-GB", {
+          day: "2-digit",
+          month: "short",
+          hour: "2-digit",
+          minute: "2-digit"
+        });
+      } catch (e) {
+        return "";
+      }
+    }
+
+    function getScoreValue(match, side) {
+      if (!match || !match.score) return "-";
+
+      if (match.status === "TIMED" || match.status === "SCHEDULED") {
+        return "-";
+      }
+
+      const score = match.score;
+      const candidates = [
+        score.fullTime,
+        score.regularTime,
+        score.extraTime,
+        score.halfTime
+      ];
+
+      for (let i = 0; i < candidates.length; i++) {
+        const part = candidates[i];
+        if (part && part[side] !== null && part[side] !== undefined) {
+          return part[side];
+        }
+      }
+
+      return "-";
+    }
+
+    function renderDraws() {
+      const container = document.getElementById("draw-results");
+      let html = "";
+
+      for (let i = 0; i < drawData.length; i++) {
+        const item = drawData[i];
+        html += `
+          <div class="card">
+            <div class="country">${item.country}</div>
+            <div class="participant">${item.participant}</div>
+          </div>
+        `;
+      }
+
+      container.innerHTML = html;
+    }
+
+    function renderFallbackMatches(noteText) {
+      const container = document.getElementById("match-results");
+      let html = "";
+
+      if (noteText) {
+        html += `<div class="message error">${noteText}</div>`;
+      }
+
+      for (let i = 0; i < fallbackMatches.length; i++) {
+        const match = fallbackMatches[i];
+        const homeOwnerText = getOwners(match.homeTeam).join(", ") || "No owner";
+        const awayOwnerText = getOwners(match.awayTeam).join(", ") || "No owner";
+
+        html += `
+          <div class="match-item">
+            <div class="match-line">
+              <div class="team-left">
+                <span class="team-name">${match.homeTeam}</span>
+                <span class="owner">(${homeOwnerText})</span>
+              </div>
+
+              <div class="score">${match.homeScore} : ${match.awayScore}</div>
+
+              <div class="team-right">
+                <span class="team-name">${match.awayTeam}</span>
+                <span class="owner">(${awayOwnerText})</span>
+              </div>
+            </div>
+            <div class="status">Status: ${match.status}</div>
+            <div class="meta">${match.meta}</div>
+          </div>
+        `;
+      }
+
+      container.innerHTML = html;
+    }
+
+    function pickMatches(matches) {
+      const liveStatuses = ["IN_PLAY", "PAUSED"];
+      const finishedStatuses = ["FINISHED"];
+      const upcomingStatuses = ["TIMED", "SCHEDULED"];
+
+      const live = matches
+        .filter(m => liveStatuses.includes(m.status))
+        .sort((a, b) => new Date(a.utcDate) - new Date(b.utcDate));
+
+      const finished = matches
+        .filter(m => finishedStatuses.includes(m.status))
+        .sort((a, b) => new Date(b.utcDate) - new Date(a.utcDate))
+        .slice(0, 8);
+
+      const upcoming = matches
+        .filter(m => upcomingStatuses.includes(m.status))
+        .sort((a, b) => new Date(a.utcDate) - new Date(b.utcDate))
+        .slice(0, 6);
+
+      const combined = [...live, ...finished, ...upcoming];
+      const seen = new Set();
+      const unique = [];
+
+      for (let i = 0; i < combined.length; i++) {
+        const match = combined[i];
+        if (!seen.has(match.id)) {
+          seen.add(match.id);
+          unique.push(match);
+        }
+      }
+
+      return unique;
+    }
+
+    function renderApiMatches(matches) {
+      const container = document.getElementById("match-results");
+
+      if (!matches || matches.length === 0) {
+        renderFallbackMatches("No World Cup matches returned from API. Showing sample matches instead.");
+        return;
+      }
+
+      let html = "";
+
+      for (let i = 0; i < matches.length; i++) {
+        const match = matches[i];
+        const homeNameRaw = match.homeTeam?.name || "Home team";
+        const awayNameRaw = match.awayTeam?.name || "Away team";
+
+        const homeName = normalizeCountry(homeNameRaw);
+        const awayName = normalizeCountry(awayNameRaw);
+
+        const homeOwnerText = getOwners(homeName).join(", ") || "No owner";
+        const awayOwnerText = getOwners(awayName).join(", ") || "No owner";
+
+        const homeScore = getScoreValue(match, "home");
+        const awayScore = getScoreValue(match, "away");
+
+        const metaText = [
+          formatKickoff(match.utcDate),
+          match.stage || "",
+          match.group || ""
+        ].filter(Boolean).join(" · ");
+
+        html += `
+          <div class="match-item">
+            <div class="match-line">
+              <div class="team-left">
+                <span class="team-name">${homeName}</span>
+                <span class="owner">(${homeOwnerText})</span>
+              </div>
+
+              <div class="score">${homeScore} : ${awayScore}</div>
+
+              <div class="team-right">
+                <span class="team-name">${awayName}</span>
+                <span class="owner">(${awayOwnerText})</span>
+              </div>
+            </div>
+            <div class="status">Status: ${formatStatus(match.status)}</div>
+            <div class="meta">${metaText}</div>
+          </div>
+        `;
+      }
+
+      container.innerHTML = html;
+    }
+
+    async function fetchWorldCupMatches() {
+      // Draw results must always show, even if API fails
+      renderDraws();
+
+      if (!API_TOKEN || API_TOKEN === "PASTE_YOUR_FOOTBALL_DATA_TOKEN_HERE") {
+        renderFallbackMatches("API token is missing. Showing sample matches instead.");
+        return;
+      }
+
+      try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 10000);
+
+        const response = await fetch(API_URL, {
+          method: "GET",
+          headers: {
+            "X-Auth-Token": API_TOKEN
+          },
+          signal: controller.signal
+        });
+
+        clearTimeout(timeoutId);
+
+        if (!response.ok) {
+          const errorText = await response.text();
+          console.error("football-data HTTP error:", response.status, errorText);
+          renderFallbackMatches("API request failed. Showing sample matches instead.");
+          return;
+        }
+
+        const data = await response.json();
+        console.log("football-data response:", data);
+
+        const matches = Array.isArray(data.matches) ? data.matches : [];
+        const selectedMatches = pickMatches(matches);
+
+        renderApiMatches(selectedMatches);
+      } catch (error) {
+        console.error("Failed to fetch World Cup matches:", error);
+        renderFallbackMatches("Could not load API data. Showing sample matches instead.");
+      }
+    }
+
+    // Always start here
+    fetchWorldCupMatches();
+  </script>
+</body>
+</html>
