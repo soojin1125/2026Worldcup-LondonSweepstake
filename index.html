@@ -33,7 +33,7 @@
 
     .hero {
       text-align: center;
-      margin-bottom: 28px;
+      margin-bottom: 24px;
     }
 
     .hero h1 {
@@ -48,49 +48,8 @@
     }
 
     .section-title {
-      margin: 32px 0 16px;
+      margin: 28px 0 16px;
       font-size: 1.4rem;
-    }
-
-    .cards {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-      gap: 16px;
-    }
-
-    .card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 18px 16px;
-      box-shadow: var(--shadow);
-      min-height: 120px;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-    }
-
-    .participant {
-      text-align: center;
-      color: var(--green);
-      font-weight: 700;
-      font-size: 1.2rem;
-      margin-bottom: 8px;
-    }
-
-    .drawn-label {
-      text-align: center;
-      font-size: 0.84rem;
-      color: var(--muted);
-      letter-spacing: 0.5px;
-      text-transform: uppercase;
-      margin-bottom: 14px;
-    }
-
-    .country {
-      font-size: 1.05rem;
-      font-weight: 600;
-      text-align: left;
     }
 
     .live-box {
@@ -103,7 +62,7 @@
     }
 
     .match-list {
-      margin: 16px 0 0 0;
+      margin: 12px 0 0 0;
       padding: 0;
       list-style: none;
     }
@@ -135,6 +94,38 @@
       font-size: 0.95rem;
     }
 
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 16px;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 18px 16px;
+      box-shadow: var(--shadow);
+      min-height: 88px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .participant {
+      text-align: center;
+      color: var(--green);
+      font-weight: 700;
+      font-size: 1.1rem;
+      margin-bottom: 10px;
+    }
+
+    .country {
+      font-size: 1rem;
+      font-weight: 600;
+      text-align: left;
+    }
+
     .footer-note {
       margin-top: 24px;
       color: var(--muted);
@@ -144,8 +135,8 @@
 
     @media (max-width: 640px) {
       .hero h1 { font-size: 1.6rem; }
-      .participant { font-size: 1.05rem; }
-      .country { font-size: 1rem; }
+      .participant { font-size: 1rem; }
+      .country { font-size: 0.95rem; }
     }
   </style>
 </head>
@@ -153,20 +144,22 @@
   <div class="container">
     <div class="hero">
       <h1>🏆 World Cup Sweepstake</h1>
-      <p>Draw results and match tracker</p>
+      <p>Live match results by team owner</p>
     </div>
 
-    <h2 class="section-title">Draw Results</h2>
-    <div class="cards" id="draw-cards"></div>
-
+    <!-- MAIN SECTION FIRST -->
     <h2 class="section-title">Match Results by Team Owner</h2>
     <div class="live-box">
-      <div class="badge">Demo mode</div>
+      <div class="badge">Demo data for now</div>
       <p class="muted">
-        This section shows how match results can display both the country and the person who drew that country.
+        This section is the main view. It will later be connected to live match data from an API.
       </p>
       <ul class="match-list" id="live-results"></ul>
     </div>
+
+    <!-- DRAW RESULTS SECOND -->
+    <h2 class="section-title">Draw Results</h2>
+    <div class="cards" id="draw-cards"></div>
 
     <p class="footer-note">
       Built for the office sweepstake 🍀
@@ -211,7 +204,6 @@
       { participant: "Peter Robinson", country: "Cabo Verde" },
       { participant: "Peter Robinson", country: "Uzbekistan" },
       { participant: "Rob McBride", country: "Tunisia" },
-
       { participant: "Samuel Davies", country: "Bosnia & Herzegovina" },
       { participant: "Samuel Davies", country: "Iraq" },
       { participant: "Sarah Fallon", country: "Côte d’Ivoire" },
@@ -258,6 +250,7 @@
       return countryOwnerMap[normalized] || [];
     }
 
+    // DRAW RESULTS RENDER
     const drawCards = document.getElementById("draw-cards");
 
     drawData.forEach(item => {
@@ -265,13 +258,13 @@
       card.className = "card";
       card.innerHTML = `
         <div class="participant">${item.participant}</div>
-        <div class="drawn-label">Was Drawn</div>
         <div class="country">${item.country}</div>
       `;
       drawCards.appendChild(card);
     });
 
-    // Temporary demo data for match display
+    // DEMO MATCH DATA
+    // Later this will be replaced with API fetch data
     const liveMatches = [
       {
         homeTeam: "Portugal",
@@ -296,11 +289,11 @@
       }
     ];
 
-    function renderLiveMatches() {
+    function renderLiveMatches(matches) {
       const list = document.getElementById("live-results");
       list.innerHTML = "";
 
-      liveMatches.forEach(match => {
+      matches.forEach(match => {
         const homeOwners = getOwners(match.homeTeam);
         const awayOwners = getOwners(match.awayTeam);
 
@@ -316,7 +309,22 @@
       });
     }
 
-    renderLiveMatches();
+    renderLiveMatches(liveMatches);
+
+    /*
+    NEXT STEP: replace liveMatches above with real API data
+
+    Example shape we want after fetching:
+    [
+      {
+        homeTeam: "Portugal",
+        awayTeam: "Brazil",
+        homeScore: 2,
+        awayScore: 1,
+        status: "LIVE"
+      }
+    ]
+    */
   </script>
 </body>
 </html>
