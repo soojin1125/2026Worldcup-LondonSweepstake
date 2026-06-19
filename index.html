@@ -71,14 +71,41 @@
     }
 
     .participant {
-      color: #7ac943;
+      color: #1e3a8a; 
       font-weight: bold;
       margin-bottom: 8px;
     }
 
     .country {
-      font-weight: bold;
+      color: #6b7280;
+      font-weight: normal;
     }
+
+.match-line {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.team-inline {
+  font-size: 1rem;
+}
+
+.owner-inline {
+  color: #6b7280;
+  font-size: 0.95rem;
+}
+
+.score-inline {
+  font-weight: bold;
+  font-size: 1.05rem;
+  min-width: 60px;
+  text-align: center;
+}
+
+    
   </style>
 </head>
 <body>
@@ -161,25 +188,37 @@
       return owners;
     }
 
-    function renderMatches() {
-      const container = document.getElementById("match-results");
-      let html = "";
+function renderMatches() {
+  const container = document.getElementById("match-results");
+  let html = "";
 
-      for (let i = 0; i < sampleMatches.length; i++) {
-        const match = sampleMatches[i];
-        const homeOwners = getOwners(match.homeTeam);
-        const awayOwners = getOwners(match.awayTeam);
+  for (let i = 0; i < sampleMatches.length; i++) {
+    const match = sampleMatches[i];
+    const homeOwners = getOwners(match.homeTeam);
+    const awayOwners = getOwners(match.awayTeam);
 
-        html += `
-          <div class="match-item">
-            <div><strong>${match.homeTeam}</strong> (${homeOwners.join(", ") || "No owner"})</div>
-            <div><strong>${match.awayTeam}</strong> (${awayOwners.join(", ") || "No owner"})</div>
-            <div><strong>Score:</strong> ${match.homeScore} - ${match.awayScore}</div>
-            <div class="status">Status: ${match.status}</div>
-          </div>
-        `;
-      }
+    html += `
+      <div class="match-item">
+        <div class="match-line">
+          <span class="team-inline">
+            <strong>${match.homeTeam}</strong>
+            <span class="owner-inline">(${homeOwners.join(", ") || "No owner"})</span>
+          </span>
 
+          <span class="score-inline">${match.homeScore} : ${match.awayScore}</span>
+
+          <span class="team-inline">
+            <strong>${match.awayTeam}</strong>
+            <span class="owner-inline">(${awayOwners.join(", ") || "No owner"})</span>
+          </span>
+        </div>
+        <div class="status">Status: ${match.status}</div>
+      </div>
+    `;
+  }
+
+  container.innerHTML = html;
+}
       container.innerHTML = html;
     }
 
