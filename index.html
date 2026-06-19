@@ -44,64 +44,17 @@
 
     .match-item {
       border-bottom: 1px solid #eeeeee;
-      padding: 16px 0;
+      padding: 12px 0;
     }
 
     .match-item:last-child {
       border-bottom: none;
     }
 
-    .match-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 16px;
-      flex-wrap: wrap;
-    }
-
-    .team {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      min-width: 250px;
-      flex: 1;
-    }
-
-    .team.right {
-      justify-content: flex-end;
-      text-align: right;
-    }
-
-    .flag {
-      width: 24px;
-      height: 18px;
-      object-fit: cover;
-      border: 1px solid #ddd;
-      border-radius: 3px;
-      background: #fff;
-    }
-
-    .team-name {
-      font-weight: bold;
-    }
-
-    .owner {
-      color: #6b7280;
-      font-size: 0.9rem;
-      margin-top: 2px;
-    }
-
-    .score {
-      font-size: 1.1rem;
-      font-weight: bold;
-      min-width: 70px;
-      text-align: center;
-    }
-
     .status {
-      margin-top: 6px;
       color: #6b7280;
       font-size: 0.9rem;
+      margin-top: 4px;
     }
 
     .cards {
@@ -120,33 +73,11 @@
     .participant {
       color: #7ac943;
       font-weight: bold;
-      text-align: center;
-      margin-bottom: 12px;
-    }
-
-    .country-line {
-      display: flex;
-      align-items: center;
-      gap: 10px;
+      margin-bottom: 8px;
     }
 
     .country {
       font-weight: bold;
-    }
-
-    @media (max-width: 640px) {
-      .team {
-        min-width: 100%;
-      }
-
-      .score {
-        width: 100%;
-      }
-
-      .team.right {
-        justify-content: flex-start;
-        text-align: left;
-      }
     }
   </style>
 </head>
@@ -220,144 +151,57 @@
       { homeTeam: "Netherlands", awayTeam: "England", homeScore: 1, awayScore: 3, status: "FT" }
     ];
 
-    const countryAliases = {
-      "South Korea": "Korea",
-      "Ivory Coast": "Côte d’Ivoire",
-      "Turkey": "Türkiye",
-      "USA": "United States",
-      "United States of America": "United States",
-      "DR Congo": "Congo (DRC)",
-      "Cape Verde": "Cabo Verde"
-    };
-
-    const flagMap = {
-      "Norway": "https://flagcdn.com/24x18/no.png",
-      "South Africa": "https://flagcdn.com/24x18/za.png",
-      "Morocco": "https://flagcdn.com/24x18/ma.png",
-      "Switzerland": "https://flagcdn.com/24x18/ch.png",
-      "Argentina": "https://flagcdn.com/24x18/ar.png",
-      "Belgium": "https://flagcdn.com/24x18/be.png",
-      "Jordan": "https://flagcdn.com/24x18/jo.png",
-      "Mexico": "https://flagcdn.com/24x18/mx.png",
-      "Austria": "https://flagcdn.com/24x18/at.png",
-      "Congo (DRC)": "https://flagcdn.com/24x18/cd.png",
-      "Australia": "https://flagcdn.com/24x18/au.png",
-      "France": "https://flagcdn.com/24x18/fr.png",
-      "Japan": "https://flagcdn.com/24x18/jp.png",
-      "Panama": "https://flagcdn.com/24x18/pa.png",
-      "Ecuador": "https://flagcdn.com/24x18/ec.png",
-      "United States": "https://flagcdn.com/24x18/us.png",
-      "Senegal": "https://flagcdn.com/24x18/sn.png",
-      "Colombia": "https://flagcdn.com/24x18/co.png",
-      "Canada": "https://flagcdn.com/24x18/ca.png",
-      "Qatar": "https://flagcdn.com/24x18/qa.png",
-      "Iran": "https://flagcdn.com/24x18/ir.png",
-      "Türkiye": "https://flagcdn.com/24x18/tr.png",
-      "Saudi Arabia": "https://flagcdn.com/24x18/sa.png",
-      "Germany": "https://flagcdn.com/24x18/de.png",
-      "Curacao": "https://flagcdn.com/24x18/cw.png",
-      "Ghana": "https://flagcdn.com/24x18/gh.png",
-      "Brazil": "https://flagcdn.com/24x18/br.png",
-      "Egypt": "https://flagcdn.com/24x18/eg.png",
-      "Haiti": "https://flagcdn.com/24x18/ht.png",
-      "Croatia": "https://flagcdn.com/24x18/hr.png",
-      "Spain": "https://flagcdn.com/24x18/es.png",
-      "Cabo Verde": "https://flagcdn.com/24x18/cv.png",
-      "Uzbekistan": "https://flagcdn.com/24x18/uz.png",
-      "Tunisia": "https://flagcdn.com/24x18/tn.png",
-      "Bosnia & Herzegovina": "https://flagcdn.com/24x18/ba.png",
-      "Iraq": "https://flagcdn.com/24x18/iq.png",
-      "Côte d’Ivoire": "https://flagcdn.com/24x18/ci.png",
-      "Czechia": "https://flagcdn.com/24x18/cz.png",
-      "Sweden": "https://flagcdn.com/24x18/se.png",
-      "Uruguay": "https://flagcdn.com/24x18/uy.png",
-      "Portugal": "https://flagcdn.com/24x18/pt.png",
-      "Korea": "https://flagcdn.com/24x18/kr.png",
-      "New Zealand": "https://flagcdn.com/24x18/nz.png",
-      "Netherlands": "https://flagcdn.com/24x18/nl.png",
-      "Algeria": "https://flagcdn.com/24x18/dz.png",
-      "Paraguay": "https://flagcdn.com/24x18/py.png"
-    };
-
-    function normalizeCountry(name) {
-      return countryAliases[name] || name;
-    }
-
     function getOwners(country) {
-      const target = normalizeCountry(country);
       const owners = [];
       for (let i = 0; i < drawData.length; i++) {
-        if (normalizeCountry(drawData[i].country) === target) {
+        if (drawData[i].country === country) {
           owners.push(drawData[i].participant);
         }
       }
       return owners;
     }
 
-    function getFlag(country) {
-      const target = normalizeCountry(country);
-      return flagMap[target] || "";
-    }
-
-    function renderDrawResults() {
-      const container = document.getElementById("draw-results");
-      container.innerHTML = "";
-
-      for (let i = 0; i < drawData.length; i++) {
-        const item = drawData[i];
-        const flag = getFlag(item.country);
-
-        const card = document.createElement("div");
-        card.className = "card";
-
-        card.innerHTML = `
-          <div class="participant">${item.participant}</div>
-          <div class="country-line">
-            ${flag ? `<img class="flag" src="${flag}" alt="${item.country} flag" onerror="this.style.display='none'  `;
-
-        container.appendChild(card);
-      }
-    }
-
-    function renderMatchResults() {
+    function renderMatches() {
       const container = document.getElementById("match-results");
-      container.innerHTML = "";
+      let html = "";
 
       for (let i = 0; i < sampleMatches.length; i++) {
         const match = sampleMatches[i];
         const homeOwners = getOwners(match.homeTeam);
         const awayOwners = getOwners(match.awayTeam);
-        const homeFlag = getFlag(match.homeTeam);
-        const awayFlag = getFlag(match.awayTeam);
 
-        const item = document.createElement("div");
-        item.className = "match-item";
-
-        item.innerHTML = `
-          <div class="match-row">
-            <div class="team">
-              ${homeFlag ? `<img class="flag" src="${homeFlag}" alt="${match.homeTeam} flag" onerror="this.style.display='none'v>
-                <div class="owner">${homeOwners.length ? homeOwners.join(", ") : "No owner"}</div>
-              </div>
-            </div>
-
-            <div class="score">${match.homeScore} - ${match.awayScore}</div>
-
-            <div class="team right">
-              <div>
-                <div class="team-name">${match.awayTeam}</div>
-                <div class="owner">${awayOwners.length ? awayOwners.join(", ") : "No owner"}</div>
-              </div>
-              ${awayFlag ? `<img class="flag" src="${awayFlag}" alt="${match.awayTeam} flag" onerror="this.style.display='none'h.status}</div>
+        html += `
+          <div class="match-item">
+            <div><strong>${match.homeTeam}</strong> (${homeOwners.join(", ") || "No owner"})</div>
+            <div><strong>${match.awayTeam}</strong> (${awayOwners.join(", ") || "No owner"})</div>
+            <div><strong>Score:</strong> ${match.homeScore} - ${match.awayScore}</div>
+            <div class="status">Status: ${match.status}</div>
+          </div>
         `;
-
-        container.appendChild(item);
       }
+
+      container.innerHTML = html;
     }
 
-    renderMatchResults();
-    renderDrawResults();
+    function renderDraws() {
+      const container = document.getElementById("draw-results");
+      let html = "";
+
+      for (let i = 0; i < drawData.length; i++) {
+        const item = drawData[i];
+        html += `
+          <div class="card">
+            <div class="participant">${item.participant}</div>
+            <div class="country">${item.country}</div>
+          </div>
+        `;
+      }
+
+      container.innerHTML = html;
+    }
+
+    renderMatches();
+    renderDraws();
   </script>
 </body>
 </html>
-``
