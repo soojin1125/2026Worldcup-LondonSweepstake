@@ -8,7 +8,7 @@
     body {
       margin: 0;
       font-family: Arial, sans-serif;
-      background: #f4f5f7;
+      background: #f3f4f6;
       color: #1f2937;
     }
 
@@ -21,40 +21,76 @@
     h1 {
       text-align: center;
       margin-bottom: 8px;
+      font-size: 2.2rem;
     }
 
     .subtitle {
       text-align: center;
       color: #6b7280;
       margin-bottom: 32px;
+      font-size: 1.1rem;
     }
 
     h2 {
       margin-top: 32px;
       margin-bottom: 16px;
+      font-size: 2rem;
     }
 
     .box {
       background: white;
       border: 1px solid #e5e7eb;
-      border-radius: 12px;
-      padding: 16px;
-      margin-bottom: 24px;
+      border-radius: 16px;
+      padding: 8px 18px;
+      margin-bottom: 32px;
     }
 
     .match-item {
-      border-bottom: 1px solid #eeeeee;
-      padding: 12px 0;
+      padding: 16px 0;
+      border-bottom: 1px solid #e5e7eb;
     }
 
     .match-item:last-child {
       border-bottom: none;
     }
 
+    .match-line {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .team {
+      display: flex;
+      align-items: baseline;
+      gap: 6px;
+      font-size: 1rem;
+    }
+
+    .team-name {
+      font-weight: 700;
+      color: #111827;
+    }
+
+    .owner {
+      color: #6b7280;
+      font-size: 0.95rem;
+    }
+
+    .score {
+      font-weight: 700;
+      font-size: 1.1rem;
+      min-width: 70px;
+      text-align: center;
+      color: #111827;
+    }
+
     .status {
+      margin-top: 6px;
       color: #6b7280;
       font-size: 0.9rem;
-      margin-top: 4px;
     }
 
     .cards {
@@ -66,46 +102,37 @@
     .card {
       background: white;
       border: 1px solid #e5e7eb;
-      border-radius: 12px;
+      border-radius: 14px;
       padding: 16px;
     }
 
     .participant {
-      color: #1e3a8a; 
-      font-weight: bold;
+      color: #1e3a8a;
+      font-weight: 700;
       margin-bottom: 8px;
+      font-size: 1rem;
     }
 
     .country {
       color: #6b7280;
-      font-weight: normal;
+      font-size: 0.98rem;
     }
 
-.match-line {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  flex-wrap: wrap;
-}
+    @media (max-width: 700px) {
+      .match-line {
+        flex-direction: column;
+        align-items: flex-start;
+      }
 
-.team-inline {
-  font-size: 1rem;
-}
+      .score {
+        text-align: left;
+        min-width: auto;
+      }
 
-.owner-inline {
-  color: #6b7280;
-  font-size: 0.95rem;
-}
-
-.score-inline {
-  font-weight: bold;
-  font-size: 1.05rem;
-  min-width: 60px;
-  text-align: center;
-}
-
-    
+      h2 {
+        font-size: 1.7rem;
+      }
+    }
   </style>
 </head>
 <body>
@@ -188,37 +215,35 @@
       return owners;
     }
 
-function renderMatches() {
-  const container = document.getElementById("match-results");
-  let html = "";
+    function renderMatches() {
+      const container = document.getElementById("match-results");
+      let html = "";
 
-  for (let i = 0; i < sampleMatches.length; i++) {
-    const match = sampleMatches[i];
-    const homeOwners = getOwners(match.homeTeam);
-    const awayOwners = getOwners(match.awayTeam);
+      for (let i = 0; i < sampleMatches.length; i++) {
+        const match = sampleMatches[i];
+        const homeOwnerText = getOwners(match.homeTeam).join(", ") || "No owner";
+        const awayOwnerText = getOwners(match.awayTeam).join(", ") || "No owner";
 
-    html += `
-      <div class="match-item">
-        <div class="match-line">
-          <span class="team-inline">
-            <strong>${match.homeTeam}</strong>
-            <span class="owner-inline">(${homeOwners.join(", ") || "No owner"})</span>
-          </span>
+        html += `
+          <div class="match-item">
+            <div class="match-line">
+              <div class="team">
+                <span class="team-name">${match.homeTeam}</span>
+                <span class="owner">(${homeOwnerText})</span>
+              </div>
 
-          <span class="score-inline">${match.homeScore} : ${match.awayScore}</span>
+              <div class="score">${match.homeScore} : ${match.awayScore}</div>
 
-          <span class="team-inline">
-            <strong>${match.awayTeam}</strong>
-            <span class="owner-inline">(${awayOwners.join(", ") || "No owner"})</span>
-          </span>
-        </div>
-        <div class="status">Status: ${match.status}</div>
-      </div>
-    `;
-  }
+              <div class="team">
+                <span class="team-name">${match.awayTeam}</span>
+                <span class="owner">(${awayOwnerText})</span>
+              </div>
+            </div>
+            <div class="status">Status: ${match.status}</div>
+          </div>
+        `;
+      }
 
-  container.innerHTML = html;
-}
       container.innerHTML = html;
     }
 
