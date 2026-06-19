@@ -5,163 +5,123 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>World Cup Sweepstake</title>
   <style>
-    :root {
-      --bg: #f4f5f7;
-      --card: #ffffff;
-      --text: #1f2937;
-      --muted: #6b7280;
-      --green: #7ac943;
-      --border: #e5e7eb;
-      --shadow: 0 2px 8px rgba(0,0,0,0.06);
-      --radius: 16px;
-    }
-
-    * { box-sizing: border-box; }
-
     body {
       margin: 0;
-      font-family: Arial, Helvetica, sans-serif;
-      background: var(--bg);
-      color: var(--text);
+      font-family: Arial, sans-serif;
+      background: #f4f5f7;
+      color: #1f2937;
     }
 
     .container {
-      max-width: 1400px;
+      max-width: 1200px;
       margin: 0 auto;
       padding: 24px;
     }
 
-    .hero {
+    h1 {
       text-align: center;
-      margin-bottom: 24px;
-    }
-
-    .hero h1 {
-      margin: 0 0 8px 0;
-      font-size: 2rem;
-    }
-
-    .hero p {
-      margin: 0;
-      color: var(--muted);
-      font-size: 1rem;
-    }
-
-    .section-title {
-      margin: 28px 0 16px;
-      font-size: 1.4rem;
-    }
-
-    .live-box {
-      background: #ffffff;
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      padding: 20px;
-      margin-top: 8px;
-    }
-
-    .match-list {
-      margin: 12px 0 0 0;
-      padding: 0;
-      list-style: none;
-    }
-
-    .match-list li {
-      padding: 14px 0;
-      border-bottom: 1px solid #eee;
-      line-height: 1.7;
-    }
-
-    .match-list li:last-child {
-      border-bottom: none;
-    }
-
-    .badge {
-      display: inline-block;
-      background: #eef9e8;
-      color: #3b7f1b;
-      border: 1px solid #d8f0ca;
-      border-radius: 999px;
-      padding: 4px 10px;
-      font-size: 0.8rem;
-      font-weight: 700;
       margin-bottom: 8px;
     }
 
-    .muted {
-      color: var(--muted);
-      font-size: 0.95rem;
+    .subtitle {
+      text-align: center;
+      color: #6b7280;
+      margin-bottom: 32px;
+    }
+
+    h2 {
+      margin-top: 32px;
+      margin-bottom: 16px;
+    }
+
+    .box {
+      background: white;
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 24px;
+    }
+
+    .match-item {
+      border-bottom: 1px solid #eeeeee;
+      padding: 16px 0;
+    }
+
+    .match-item:last-child {
+      border-bottom: none;
     }
 
     .match-row {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 12px;
+      gap: 16px;
       flex-wrap: wrap;
     }
 
-    .team-block {
+    .team {
       display: flex;
       align-items: center;
       gap: 10px;
-      min-width: 260px;
+      min-width: 250px;
       flex: 1;
     }
 
-    .team-flag {
+    .team.right {
+      justify-content: flex-end;
+      text-align: right;
+    }
+
+    .flag {
       width: 24px;
       height: 18px;
       object-fit: cover;
-      border-radius: 3px;
       border: 1px solid #ddd;
+      border-radius: 3px;
+      background: #fff;
     }
 
-    .score-block {
-      font-weight: 700;
-      font-size: 1.1rem;
-      min-width: 80px;
-      text-align: center;
+    .team-name {
+      font-weight: bold;
     }
 
     .owner {
-      display: block;
-      color: var(--muted);
+      color: #6b7280;
       font-size: 0.9rem;
       margin-top: 2px;
     }
 
+    .score {
+      font-size: 1.1rem;
+      font-weight: bold;
+      min-width: 70px;
+      text-align: center;
+    }
+
+    .status {
+      margin-top: 6px;
+      color: #6b7280;
+      font-size: 0.9rem;
+    }
+
     .cards {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
       gap: 16px;
     }
 
     .card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 18px 16px;
-      box-shadow: var(--shadow);
-      min-height: 88px;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
+      background: white;
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      padding: 16px;
     }
 
     .participant {
+      color: #7ac943;
+      font-weight: bold;
       text-align: center;
-      color: var(--green);
-      font-weight: 700;
-      font-size: 1.1rem;
-      margin-bottom: 10px;
-    }
-
-    .country {
-      font-size: 1rem;
-      font-weight: 600;
-      text-align: left;
+      margin-bottom: 12px;
     }
 
     .country-line {
@@ -170,44 +130,36 @@
       gap: 10px;
     }
 
-    .footer-note {
-      margin-top: 24px;
-      color: var(--muted);
-      font-size: 0.95rem;
-      text-align: center;
+    .country {
+      font-weight: bold;
     }
 
     @media (max-width: 640px) {
-      .hero h1 { font-size: 1.6rem; }
-      .participant { font-size: 1rem; }
-      .country { font-size: 0.95rem; }
-      .team-block { min-width: 100%; }
-      .score-block { width: 100%; }
+      .team {
+        min-width: 100%;
+      }
+
+      .score {
+        width: 100%;
+      }
+
+      .team.right {
+        justify-content: flex-start;
+        text-align: left;
+      }
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <div class="hero">
-      <h1>🏆 World Cup Sweepstake</h1>
-      <p>Live match results by team owner</p>
-    </div>
+    <h1>🏆 World Cup Sweepstake</h1>
+    <div class="subtitle">Match Results by Team Owner</div>
 
-    <h2 class="section-title">Match Results by Team Owner</h2>
-    <div class="live-box">
-      <div class="badge">Step 1: sample data</div>
-      <p class="muted">
-        API 연결 전에는 샘플 경기 결과를 보여줍니다.
-      </p>
-      <ul class="match-list" id="live-results"></ul>
-    </div>
+    <h2>Match Results by Team Owner</h2>
+    <div class="box" id="match-results"></div>
 
-    <h2 class="section-title">Draw Results</h2>
-    <div class="cards" id="draw-cards"></div>
-
-    <p class="footer-note">
-      Built for the office sweepstake 🍀
-    </p>
+    <h2>Draw Results</h2>
+    <div class="cards" id="draw-results"></div>
   </div>
 
   <script>
@@ -262,6 +214,12 @@
       { participant: "Tim Hewer", country: "Paraguay" }
     ];
 
+    const sampleMatches = [
+      { homeTeam: "Portugal", awayTeam: "Brazil", homeScore: 2, awayScore: 1, status: "LIVE" },
+      { homeTeam: "Korea", awayTeam: "Uruguay", homeScore: 0, awayScore: 0, status: "HT" },
+      { homeTeam: "Netherlands", awayTeam: "England", homeScore: 1, awayScore: 3, status: "FT" }
+    ];
+
     const countryAliases = {
       "South Korea": "Korea",
       "Ivory Coast": "Côte d’Ivoire",
@@ -272,161 +230,134 @@
       "Cape Verde": "Cabo Verde"
     };
 
-    const countryCodeMap = {
-      "Norway": "no",
-      "South Africa": "za",
-      "Morocco": "ma",
-      "Switzerland": "ch",
-      "Argentina": "ar",
-      "Belgium": "be",
-      "Jordan": "jo",
-      "Mexico": "mx",
-      "Austria": "at",
-      "Congo (DRC)": "cd",
-      "Australia": "au",
-      "France": "fr",
-      "England": "gb-eng",
-      "Japan": "jp",
-      "Panama": "pa",
-      "Ecuador": "ec",
-      "United States": "us",
-      "Senegal": "sn",
-      "Colombia": "co",
-      "Canada": "ca",
-      "Qatar": "qa",
-      "Iran": "ir",
-      "Scotland": "gb-sct",
-      "Türkiye": "tr",
-      "Saudi Arabia": "sa",
-      "Germany": "de",
-      "Curacao": "cw",
-      "Ghana": "gh",
-      "Brazil": "br",
-      "Egypt": "eg",
-      "Haiti": "ht",
-      "Croatia": "hr",
-      "Spain": "es",
-      "Cabo Verde": "cv",
-      "Uzbekistan": "uz",
-      "Tunisia": "tn",
-      "Bosnia & Herzegovina": "ba",
-      "Iraq": "iq",
-      "Côte d’Ivoire": "ci",
-      "Czechia": "cz",
-      "Sweden": "se",
-      "Uruguay": "uy",
-      "Portugal": "pt",
-      "Korea": "kr",
-      "New Zealand": "nz",
-      "Netherlands": "nl",
-      "Algeria": "dz",
-      "Paraguay": "py"
+    const flagMap = {
+      "Norway": "https://flagcdn.com/24x18/no.png",
+      "South Africa": "https://flagcdn.com/24x18/za.png",
+      "Morocco": "https://flagcdn.com/24x18/ma.png",
+      "Switzerland": "https://flagcdn.com/24x18/ch.png",
+      "Argentina": "https://flagcdn.com/24x18/ar.png",
+      "Belgium": "https://flagcdn.com/24x18/be.png",
+      "Jordan": "https://flagcdn.com/24x18/jo.png",
+      "Mexico": "https://flagcdn.com/24x18/mx.png",
+      "Austria": "https://flagcdn.com/24x18/at.png",
+      "Congo (DRC)": "https://flagcdn.com/24x18/cd.png",
+      "Australia": "https://flagcdn.com/24x18/au.png",
+      "France": "https://flagcdn.com/24x18/fr.png",
+      "Japan": "https://flagcdn.com/24x18/jp.png",
+      "Panama": "https://flagcdn.com/24x18/pa.png",
+      "Ecuador": "https://flagcdn.com/24x18/ec.png",
+      "United States": "https://flagcdn.com/24x18/us.png",
+      "Senegal": "https://flagcdn.com/24x18/sn.png",
+      "Colombia": "https://flagcdn.com/24x18/co.png",
+      "Canada": "https://flagcdn.com/24x18/ca.png",
+      "Qatar": "https://flagcdn.com/24x18/qa.png",
+      "Iran": "https://flagcdn.com/24x18/ir.png",
+      "Türkiye": "https://flagcdn.com/24x18/tr.png",
+      "Saudi Arabia": "https://flagcdn.com/24x18/sa.png",
+      "Germany": "https://flagcdn.com/24x18/de.png",
+      "Curacao": "https://flagcdn.com/24x18/cw.png",
+      "Ghana": "https://flagcdn.com/24x18/gh.png",
+      "Brazil": "https://flagcdn.com/24x18/br.png",
+      "Egypt": "https://flagcdn.com/24x18/eg.png",
+      "Haiti": "https://flagcdn.com/24x18/ht.png",
+      "Croatia": "https://flagcdn.com/24x18/hr.png",
+      "Spain": "https://flagcdn.com/24x18/es.png",
+      "Cabo Verde": "https://flagcdn.com/24x18/cv.png",
+      "Uzbekistan": "https://flagcdn.com/24x18/uz.png",
+      "Tunisia": "https://flagcdn.com/24x18/tn.png",
+      "Bosnia & Herzegovina": "https://flagcdn.com/24x18/ba.png",
+      "Iraq": "https://flagcdn.com/24x18/iq.png",
+      "Côte d’Ivoire": "https://flagcdn.com/24x18/ci.png",
+      "Czechia": "https://flagcdn.com/24x18/cz.png",
+      "Sweden": "https://flagcdn.com/24x18/se.png",
+      "Uruguay": "https://flagcdn.com/24x18/uy.png",
+      "Portugal": "https://flagcdn.com/24x18/pt.png",
+      "Korea": "https://flagcdn.com/24x18/kr.png",
+      "New Zealand": "https://flagcdn.com/24x18/nz.png",
+      "Netherlands": "https://flagcdn.com/24x18/nl.png",
+      "Algeria": "https://flagcdn.com/24x18/dz.png",
+      "Paraguay": "https://flagcdn.com/24x18/py.png"
     };
 
-    function normalizeCountryName(name) {
+    function normalizeCountry(name) {
       return countryAliases[name] || name;
     }
 
-    function getFlagUrl(countryName) {
-      const normalized = normalizeCountryName(countryName);
-      const code = countryCodeMap[normalized];
-      if (!code) return "";
-      return `https://flagcdn.com/24x18/${code}.png`;
-    }
-
-    function buildCountryOwnerMap(data) {
-      const map = {};
-      data.forEach(item => {
-        const country = normalizeCountryName(item.country);
-        if (!map[country]) {
-          map[country] = [];
+    function getOwners(country) {
+      const target = normalizeCountry(country);
+      const owners = [];
+      for (let i = 0; i < drawData.length; i++) {
+        if (normalizeCountry(drawData[i].country) === target) {
+          owners.push(drawData[i].participant);
         }
-        map[country].push(item.participant);
-      });
-      return map;
-    }
-
-    const countryOwnerMap = buildCountryOwnerMap(drawData);
-
-    function getOwners(countryName) {
-      const normalized = normalizeCountryName(countryName);
-      return countryOwnerMap[normalized] || [];
-    }
-
-    const drawCards = document.getElementById("draw-cards");
-
-    drawData.forEach(item => {
-      const card = document.createElement("div");
-      card.className = "card";
-
-      const flagUrl = getFlagUrl(item.country);
-
-      card.innerHTML = `
-        <div class="participant">${item.participant}</div>
-        <div class="country-line">
-          ${flagUrl ? `<img class="team-flag" src="${flagUrl}" alt="${item.country} flag/div>
-        </div>
-      `;
-      drawCards.appendChild(card);
-    });
-
-    const liveMatches = [
-      {
-        homeTeam: "Portugal",
-        awayTeam: "Brazil",
-        homeScore: 2,
-        awayScore: 1,
-        status: "LIVE"
-      },
-      {
-        homeTeam: "Korea",
-        awayTeam: "Uruguay",
-        homeScore: 0,
-        awayScore: 0,
-        status: "HT"
-      },
-      {
-        homeTeam: "Netherlands",
-        awayTeam: "England",
-        homeScore: 1,
-        awayScore: 3,
-        status: "FT"
       }
-    ];
+      return owners;
+    }
 
-    function renderLiveMatches(matches) {
-      const list = document.getElementById("live-results");
-      list.innerHTML = "";
+    function getFlag(country) {
+      const target = normalizeCountry(country);
+      return flagMap[target] || "";
+    }
 
-      matches.forEach(match => {
+    function renderDrawResults() {
+      const container = document.getElementById("draw-results");
+      container.innerHTML = "";
+
+      for (let i = 0; i < drawData.length; i++) {
+        const item = drawData[i];
+        const flag = getFlag(item.country);
+
+        const card = document.createElement("div");
+        card.className = "card";
+
+        card.innerHTML = `
+          <div class="participant">${item.participant}</div>
+          <div class="country-line">
+            ${flag ? `<img class="flag" src="${flag}" alt="${item.country} flag" onerror="this.style.display='none'  `;
+
+        container.appendChild(card);
+      }
+    }
+
+    function renderMatchResults() {
+      const container = document.getElementById("match-results");
+      container.innerHTML = "";
+
+      for (let i = 0; i < sampleMatches.length; i++) {
+        const match = sampleMatches[i];
         const homeOwners = getOwners(match.homeTeam);
         const awayOwners = getOwners(match.awayTeam);
-        const homeFlag = getFlagUrl(match.homeTeam);
-        const awayFlag = getFlagUrl(match.awayTeam);
+        const homeFlag = getFlag(match.homeTeam);
+        const awayFlag = getFlag(match.awayTeam);
 
-        const li = document.createElement("li");
-        li.innerHTML = `
+        const item = document.createElement("div");
+        item.className = "match-item";
+
+        item.innerHTML = `
           <div class="match-row">
-            <div class="team-block">
-              ${homeFlag ? `<img class="team-flag" src="${homeFlag}" alt="${match.homeTeam} flagch.homeTeam}</strong>
-                <span class="owner">${homeOwners.join(", ") || "No owner"}</span>
+            <div class="team">
+              ${homeFlag ? `<img class="flag" src="${homeFlag}" alt="${match.homeTeam} flag" onerror="this.style.display='none'v>
+                <div class="owner">${homeOwners.length ? homeOwners.join(", ") : "No owner"}</div>
               </div>
             </div>
 
-            <div class="score-block">${match.homeScore} - ${match.awayScore}</div>
+            <div class="score">${match.homeScore} - ${match.awayScore}</div>
 
-            <div class="team-block" style="justify-content:flex-end; text-align:right;">
+            <div class="team right">
               <div>
-                <strong>${match.awayTeam}</strong>
-                <span class="owner">${awayOwners.join(", ") || "No owner"}</span>
+                <div class="team-name">${match.awayTeam}</div>
+                <div class="owner">${awayOwners.length ? awayOwners.join(", ") : "No owner"}</div>
               </div>
-              ${awayFlag ? `<img class="team-flag" src="${awayFlag}" alt="${match.awayTeam} flagv class="muted">Status: ${match.status}</div>
+              ${awayFlag ? `<img class="flag" src="${awayFlag}" alt="${match.awayTeam} flag" onerror="this.style.display='none'h.status}</div>
         `;
-        list.appendChild(li);
-      });
+
+        container.appendChild(item);
+      }
     }
 
-    renderLiveMatches(liveMatches);
+    renderMatchResults();
+    renderDrawResults();
   </script>
 </body>
 </html>
+``
