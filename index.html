@@ -94,6 +94,44 @@
       font-size: 0.95rem;
     }
 
+    .match-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .team-block {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 260px;
+      flex: 1;
+    }
+
+    .team-flag {
+      width: 24px;
+      height: 18px;
+      object-fit: cover;
+      border-radius: 3px;
+      border: 1px solid #ddd;
+    }
+
+    .score-block {
+      font-weight: 700;
+      font-size: 1.1rem;
+      min-width: 80px;
+      text-align: center;
+    }
+
+    .owner {
+      display: block;
+      color: var(--muted);
+      font-size: 0.9rem;
+      margin-top: 2px;
+    }
+
     .cards {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
@@ -126,6 +164,12 @@
       text-align: left;
     }
 
+    .country-line {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
     .footer-note {
       margin-top: 24px;
       color: var(--muted);
@@ -137,6 +181,8 @@
       .hero h1 { font-size: 1.6rem; }
       .participant { font-size: 1rem; }
       .country { font-size: 0.95rem; }
+      .team-block { min-width: 100%; }
+      .score-block { width: 100%; }
     }
   </style>
 </head>
@@ -147,17 +193,15 @@
       <p>Live match results by team owner</p>
     </div>
 
-    <!-- MAIN SECTION FIRST -->
     <h2 class="section-title">Match Results by Team Owner</h2>
     <div class="live-box">
-      <div class="badge">Demo data for now</div>
+      <div class="badge">Step 1: sample data</div>
       <p class="muted">
-        This section is the main view. It will later be connected to live match data from an API.
+        API 연결 전에는 샘플 경기 결과를 보여줍니다.
       </p>
       <ul class="match-list" id="live-results"></ul>
     </div>
 
-    <!-- DRAW RESULTS SECOND -->
     <h2 class="section-title">Draw Results</h2>
     <div class="cards" id="draw-cards"></div>
 
@@ -224,11 +268,70 @@
       "Turkey": "Türkiye",
       "USA": "United States",
       "United States of America": "United States",
-      "DR Congo": "Congo (DRC)"
+      "DR Congo": "Congo (DRC)",
+      "Cape Verde": "Cabo Verde"
+    };
+
+    const countryCodeMap = {
+      "Norway": "no",
+      "South Africa": "za",
+      "Morocco": "ma",
+      "Switzerland": "ch",
+      "Argentina": "ar",
+      "Belgium": "be",
+      "Jordan": "jo",
+      "Mexico": "mx",
+      "Austria": "at",
+      "Congo (DRC)": "cd",
+      "Australia": "au",
+      "France": "fr",
+      "England": "gb-eng",
+      "Japan": "jp",
+      "Panama": "pa",
+      "Ecuador": "ec",
+      "United States": "us",
+      "Senegal": "sn",
+      "Colombia": "co",
+      "Canada": "ca",
+      "Qatar": "qa",
+      "Iran": "ir",
+      "Scotland": "gb-sct",
+      "Türkiye": "tr",
+      "Saudi Arabia": "sa",
+      "Germany": "de",
+      "Curacao": "cw",
+      "Ghana": "gh",
+      "Brazil": "br",
+      "Egypt": "eg",
+      "Haiti": "ht",
+      "Croatia": "hr",
+      "Spain": "es",
+      "Cabo Verde": "cv",
+      "Uzbekistan": "uz",
+      "Tunisia": "tn",
+      "Bosnia & Herzegovina": "ba",
+      "Iraq": "iq",
+      "Côte d’Ivoire": "ci",
+      "Czechia": "cz",
+      "Sweden": "se",
+      "Uruguay": "uy",
+      "Portugal": "pt",
+      "Korea": "kr",
+      "New Zealand": "nz",
+      "Netherlands": "nl",
+      "Algeria": "dz",
+      "Paraguay": "py"
     };
 
     function normalizeCountryName(name) {
       return countryAliases[name] || name;
+    }
+
+    function getFlagUrl(countryName) {
+      const normalized = normalizeCountryName(countryName);
+      const code = countryCodeMap[normalized];
+      if (!code) return "";
+      return `https://flagcdn.com/24x18/${code}.png`;
     }
 
     function buildCountryOwnerMap(data) {
@@ -250,21 +353,23 @@
       return countryOwnerMap[normalized] || [];
     }
 
-    // DRAW RESULTS RENDER
     const drawCards = document.getElementById("draw-cards");
 
     drawData.forEach(item => {
       const card = document.createElement("div");
       card.className = "card";
+
+      const flagUrl = getFlagUrl(item.country);
+
       card.innerHTML = `
         <div class="participant">${item.participant}</div>
-        <div class="country">${item.country}</div>
+        <div class="country-line">
+          ${flagUrl ? `<img class="team-flag" src="${flagUrl}" alt="${item.country} flag/div>
+        </div>
       `;
       drawCards.appendChild(card);
     });
 
-    // DEMO MATCH DATA
-    // Later this will be replaced with API fetch data
     const liveMatches = [
       {
         homeTeam: "Portugal",
@@ -296,35 +401,32 @@
       matches.forEach(match => {
         const homeOwners = getOwners(match.homeTeam);
         const awayOwners = getOwners(match.awayTeam);
+        const homeFlag = getFlagUrl(match.homeTeam);
+        const awayFlag = getFlagUrl(match.awayTeam);
 
         const li = document.createElement("li");
         li.innerHTML = `
-          <strong>${match.homeTeam}</strong> (${homeOwners.join(", ") || "No owner"})
-          ${match.homeScore} - ${match.awayScore}
-          <strong>${match.awayTeam}</strong> (${awayOwners.join(", ") || "No owner"})
-          <br>
-          <span class="muted">Status: ${match.status}</span>
+          <div class="match-row">
+            <div class="team-block">
+              ${homeFlag ? `<img class="team-flag" src="${homeFlag}" alt="${match.homeTeam} flagch.homeTeam}</strong>
+                <span class="owner">${homeOwners.join(", ") || "No owner"}</span>
+              </div>
+            </div>
+
+            <div class="score-block">${match.homeScore} - ${match.awayScore}</div>
+
+            <div class="team-block" style="justify-content:flex-end; text-align:right;">
+              <div>
+                <strong>${match.awayTeam}</strong>
+                <span class="owner">${awayOwners.join(", ") || "No owner"}</span>
+              </div>
+              ${awayFlag ? `<img class="team-flag" src="${awayFlag}" alt="${match.awayTeam} flagv class="muted">Status: ${match.status}</div>
         `;
         list.appendChild(li);
       });
     }
 
     renderLiveMatches(liveMatches);
-
-    /*
-    NEXT STEP: replace liveMatches above with real API data
-
-    Example shape we want after fetching:
-    [
-      {
-        homeTeam: "Portugal",
-        awayTeam: "Brazil",
-        homeScore: 2,
-        awayScore: 1,
-        status: "LIVE"
-      }
-    ]
-    */
   </script>
 </body>
 </html>
