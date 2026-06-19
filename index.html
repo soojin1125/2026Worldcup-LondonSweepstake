@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>World Cup Sweepstake</title>
+  <style>
+    :root {
+      --bg: #f4f5f7;
+      --card: #ffffff;
+      --text: #1f2937;
+      --muted: #6b7280;
+      --green: #7ac943;
+      --border: #e5e7eb;
+      --shadow: 0 2px 8px rgba(0,0,0,0.06);
+      --radius: 16px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+
+    .hero {
+      text-align: center;
+      margin-bottom: 28px;
+    }
+
+    .hero h1 {
+      margin: 0 0 8px 0;
+      font-size: 2rem;
+    }
+
+    .hero p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 1rem;
+    }
+
+    .section-title {
+      margin: 32px 0 16px;
+      font-size: 1.4rem;
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 16px;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 18px 16px;
+      box-shadow: var(--shadow);
+      min-height: 120px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .participant {
+      text-align: center;
+      color: var(--green);
+      font-weight: 700;
+      font-size: 1.2rem;
+      margin-bottom: 8px;
+    }
+
+    .drawn-label {
+      text-align: center;
+      font-size: 0.84rem;
+      color: var(--muted);
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      margin-bottom: 14px;
+    }
+
+    .country {
+      font-size: 1.05rem;
+      font-weight: 600;
+      text-align: left;
+    }
+
+    .live-box {
+      background: #ffffff;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 20px;
+      margin-top: 8px;
+    }
+
+    .match-list {
+      margin: 16px 0 0 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .match-list li {
+      padding: 14px 0;
+      border-bottom: 1px solid #eee;
+      line-height: 1.7;
+    }
+
+    .match-list li:last-child {
+      border-bottom: none;
+    }
+
+    .badge {
+      display: inline-block;
+      background: #eef9e8;
+      color: #3b7f1b;
+      border: 1px solid #d8f0ca;
+      border-radius: 999px;
+      padding: 4px 10px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .muted {
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .footer-note {
+      margin-top: 24px;
+      color: var(--muted);
+      font-size: 0.95rem;
+      text-align: center;
+    }
+
+    @media (max-width: 640px) {
+      .hero h1 { font-size: 1.6rem; }
+      .participant { font-size: 1.05rem; }
+      .country { font-size: 1rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="hero">
+      <h1>🏆 World Cup Sweepstake</h1>
+      <p>Draw results and match tracker</p>
+    </div>
+
+    <h2 class="section-title">Draw Results</h2>
+    <div class="cards" id="draw-cards"></div>
+
+    <h2 class="section-title">Match Results by Team Owner</h2>
+    <div class="live-box">
+      <div class="badge">Demo mode</div>
+      <p class="muted">
+        This section shows how match results can display both the country and the person who drew that country.
+      </p>
+      <ul class="match-list" id="live-results"></ul>
+    </div>
+
+    <p class="footer-note">
+      Built for the office sweepstake 🍀
+    </p>
+  </div>
+
+  <script>
+    const drawData = [
+      { participant: "Alex Haines", country: "Norway" },
+      { participant: "Allison Clark", country: "South Africa" },
+      { participant: "Andrew Snoad", country: "Morocco" },
+      { participant: "Andrew Snoad", country: "Switzerland" },
+      { participant: "Anna Smith", country: "Argentina" },
+      { participant: "Charlie Finchett", country: "Belgium" },
+      { participant: "Chris Flach", country: "Jordan" },
+      { participant: "Chris Flach", country: "Mexico" },
+      { participant: "Dami Osibeluwo", country: "Austria" },
+      { participant: "David Mann", country: "Congo (DRC)" },
+      { participant: "David Mann", country: "Australia" },
+      { participant: "Ed hull", country: "France" },
+      { participant: "Ed hull", country: "England" },
+      { participant: "Emily Davis", country: "Japan" },
+      { participant: "Gary Hutton", country: "Panama" },
+      { participant: "Gary Hutton", country: "Ecuador" },
+      { participant: "Gerri Speirs", country: "United States" },
+      { participant: "Jack Cornish", country: "Senegal" },
+      { participant: "Joanna Guentangue", country: "Colombia" },
+      { participant: "Joseph Bluemel", country: "Canada" },
+      { participant: "Katie Lovegrove", country: "Qatar" },
+      { participant: "Luke Armitage", country: "Iran" },
+      { participant: "Mark Wallace", country: "Scotland" },
+      { participant: "Matthew Miller", country: "Türkiye" },
+      { participant: "Matthew Miller", country: "Saudi Arabia" },
+      { participant: "Nibash Gun", country: "Germany" },
+      { participant: "Nicholas Crowe", country: "Curacao" },
+      { participant: "Nicholas Crowe", country: "Ghana" },
+      { participant: "Niel Du Preez", country: "Brazil" },
+      { participant: "Nikki Foxall", country: "Egypt" },
+      { participant: "Patrick Ahern", country: "Haiti" },
+      { participant: "Peter Benning", country: "Croatia" },
+      { participant: "Peter Benning", country: "Spain" },
+      { participant: "Peter Robinson", country: "Cabo Verde" },
+      { participant: "Peter Robinson", country: "Uzbekistan" },
+      { participant: "Rob McBride", country: "Tunisia" },
+
+      { participant: "Samuel Davies", country: "Bosnia & Herzegovina" },
+      { participant: "Samuel Davies", country: "Iraq" },
+      { participant: "Sarah Fallon", country: "Côte d’Ivoire" },
+      { participant: "Sean Berry", country: "Czechia" },
+      { participant: "Shayna Gail Velasquez", country: "Sweden" },
+      { participant: "Soojin Choe", country: "Uruguay" },
+      { participant: "Soojin Choe", country: "Portugal" },
+      { participant: "Terry Gell", country: "Korea" },
+      { participant: "Thomas Blunt", country: "New Zealand" },
+      { participant: "Thomas Blunt", country: "Netherlands" },
+      { participant: "Tim Hewer", country: "Algeria" },
+      { participant: "Tim Hewer", country: "Paraguay" }
+    ];
+
+    const countryAliases = {
+      "South Korea": "Korea",
+      "Ivory Coast": "Côte d’Ivoire",
+      "Turkey": "Türkiye",
+      "USA": "United States",
+      "United States of America": "United States",
+      "DR Congo": "Congo (DRC)"
+    };
+
+    function normalizeCountryName(name) {
+      return countryAliases[name] || name;
+    }
+
+    function buildCountryOwnerMap(data) {
+      const map = {};
+      data.forEach(item => {
+        const country = normalizeCountryName(item.country);
+        if (!map[country]) {
+          map[country] = [];
+        }
+        map[country].push(item.participant);
+      });
+      return map;
+    }
+
+    const countryOwnerMap = buildCountryOwnerMap(drawData);
+
+    function getOwners(countryName) {
+      const normalized = normalizeCountryName(countryName);
+      return countryOwnerMap[normalized] || [];
+    }
+
+    const drawCards = document.getElementById("draw-cards");
+
+    drawData.forEach(item => {
+      const card = document.createElement("div");
+      card.className = "card";
+      card.innerHTML = `
+        <div class="participant">${item.participant}</div>
+        <div class="drawn-label">Was Drawn</div>
+        <div class="country">${item.country}</div>
+      `;
+      drawCards.appendChild(card);
+    });
+
+    // Temporary demo data for match display
+    const liveMatches = [
+      {
+        homeTeam: "Portugal",
+        awayTeam: "Brazil",
+        homeScore: 2,
+        awayScore: 1,
+        status: "LIVE"
+      },
+      {
+        homeTeam: "Korea",
+        awayTeam: "Uruguay",
+        homeScore: 0,
+        awayScore: 0,
+        status: "HT"
+      },
+      {
+        homeTeam: "Netherlands",
+        awayTeam: "England",
+        homeScore: 1,
+        awayScore: 3,
+        status: "FT"
+      }
+    ];
+
+    function renderLiveMatches() {
+      const list = document.getElementById("live-results");
+      list.innerHTML = "";
+
+      liveMatches.forEach(match => {
+        const homeOwners = getOwners(match.homeTeam);
+        const awayOwners = getOwners(match.awayTeam);
+
+        const li = document.createElement("li");
+        li.innerHTML = `
+          <strong>${match.homeTeam}</strong> (${homeOwners.join(", ") || "No owner"})
+          ${match.homeScore} - ${match.awayScore}
+          <strong>${match.awayTeam}</strong> (${awayOwners.join(", ") || "No owner"})
+          <br>
+          <span class="muted">Status: ${match.status}</span>
+        `;
+        list.appendChild(li);
+      });
+    }
+
+    renderLiveMatches();
+  </script>
+</body>
+</html>
