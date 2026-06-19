@@ -34,9 +34,15 @@
 
     h2 {
       margin-top: 32px;
-      margin-bottom: 16px;
+      margin-bottom: 8px;
       font-size: 2rem;
       color: #111827;
+    }
+
+    .section-note {
+      color: #6b7280;
+      font-size: 0.95rem;
+      margin-bottom: 16px;
     }
 
     .box {
@@ -174,12 +180,12 @@
   <div class="container">
     <h1>🏆 World Cup Sweepstake</h1>
     <div class="subtitle">Match Results by Team Owner</div>
-    
-<h2>Match Results by Team Owner</h2>
-<div class="subtitle-note">
-  Showing all live matches, the latest 8 finished matches, and the next 6 upcoming matches.
-</div>
-      <div class="box" id="match-results">
+
+    <h2>Match Results by Team Owner</h2>
+    <div class="section-note">
+      Showing the latest 8 finished matches first, then all live matches, followed by the next 6 upcoming matches in chronological order.
+    </div>
+    <div class="box" id="match-results">
       <div class="message">Loading World Cup matches...</div>
     </div>
 
@@ -188,7 +194,7 @@
   </div>
 
   <script>
-    // Use your Worker URL here
+    // Change this only if your Worker URL is different
     const API_URL = "https://worldcup-api-proxy.choe-soojin.workers.dev";
 
     const drawData = [
@@ -338,6 +344,11 @@
       return "-";
     }
 
+    function getMatchTime(match) {
+      const t = new Date(match.utcDate).getTime();
+      return Number.isFinite(t) ? t : 0;
+    }
+
     function renderDraws() {
       const container = document.getElementById("draw-results");
       let html = "";
@@ -392,40 +403,28 @@
       container.innerHTML = html;
     }
 
-function pickMatches(matches) {
-  const liveStatuses = ["IN_PLAY", "PAUSED"];
-  const finishedStatuses = ["FINISHED"];
-  const upcomingStatuses = ["TIMED", "SCHEDULED"];
+    function pickMatches(matches) {
+      const liveStatuses = ["IN_PLAY", "PAUSED"];
+      const finishedStatuses = ["FINISHED"];
+      const upcomingStatuses = ["TIMED", "SCHEDULED"];
 
-  const live = matches
-    .filter(m => liveStatuses.includes(m.status))
-    .sort((a, b) => new Date(a.utcDate) - new Date(b.utcDate));
+      const finished = matches
+        .filter(match => finishedStatuses.includes(match.status))
+        .sort((a, b) => getMatchTime(b) - getMatchTime(a))
+        .slice(0, 8)
+        .sort((a, b) => getMatchTime(a) - getMatchTime(b));
 
-  const finished = matches
-    .filter(m => finishedStatuses.includes(m.status))
-    .sort((a, b) => new Date(b.utcDate) - new Date(a.utcDate))
-    .slice(0, 8);
+      const live = matches
+        .filter(match => liveStatuses.includes(match.status))
+        .sort((a, b) => getMatchTime(a) - getMatchTime(b));
 
-  const upcoming = matches
-    .filter(m => upcomingStatuses.includes(m.status))
-    .sort((a, b) => new Date(a.utcDate) - new Date(b.utcDate))
-    .slice(0, 6);
+      const upcoming = matches
+        .filter(match => upcomingStatuses.includes(match.status))
+        .sort((a, b) => getMatchTime(a) - getMatchTime(b))
+        .slice(0, 6);
 
-  const combined = [...live, ...finished, ...upcoming];
-  const seen = new Set();
-  const unique = [];
-
-  for (let i = 0; i < combined.length; i++) {
-    const match = combined[i];
-    if (!seen.has(match.id)) {
-      seen.add(match.id);
-      unique.push(match);
+      return [...finished, ...live, ...upcoming];
     }
-  }
-
-  return unique;
-}
-
 
     function renderApiMatches(matches) {
       const container = document.getElementById("match-results");
@@ -453,8 +452,8 @@ function pickMatches(matches) {
 
         const metaText = [
           formatKickoff(match.utcDate),
-          match.stage || "",
-          match.group || ""
+          match.group ? `Group ${match.group}` : "",
+          match.stage || ""
         ].filter(Boolean).join(" · ");
 
         html += `
