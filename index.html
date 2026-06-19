@@ -174,9 +174,12 @@
   <div class="container">
     <h1>🏆 World Cup Sweepstake</h1>
     <div class="subtitle">Match Results by Team Owner</div>
-
-    <h2>Match Results by Team Owner</h2>
-    <div class="box" id="match-results">
+    
+<h2>Match Results by Team Owner</h2>
+<div class="subtitle-note">
+  Showing all live matches, the latest 8 finished matches, and the next 6 upcoming matches.
+</div>
+      <div class="box" id="match-results">
       <div class="message">Loading World Cup matches...</div>
     </div>
 
@@ -389,39 +392,40 @@
       container.innerHTML = html;
     }
 
-    function pickMatches(matches) {
-      const liveStatuses = ["IN_PLAY", "PAUSED"];
-      const finishedStatuses = ["FINISHED"];
-      const upcomingStatuses = ["TIMED", "SCHEDULED"];
+function pickMatches(matches) {
+  const liveStatuses = ["IN_PLAY", "PAUSED"];
+  const finishedStatuses = ["FINISHED"];
+  const upcomingStatuses = ["TIMED", "SCHEDULED"];
 
-      const live = matches
-        .filter(m => liveStatuses.includes(m.status))
-        .sort((a, b) => new Date(a.utcDate) - new Date(b.utcDate));
+  const live = matches
+    .filter(m => liveStatuses.includes(m.status))
+    .sort((a, b) => new Date(a.utcDate) - new Date(b.utcDate));
 
-      const finished = matches
-        .filter(m => finishedStatuses.includes(m.status))
-        .sort((a, b) => new Date(b.utcDate) - new Date(a.utcDate))
-        .slice(0, 8);
+  const finished = matches
+    .filter(m => finishedStatuses.includes(m.status))
+    .sort((a, b) => new Date(b.utcDate) - new Date(a.utcDate))
+    .slice(0, 8);
 
-      const upcoming = matches
-        .filter(m => upcomingStatuses.includes(m.status))
-        .sort((a, b) => new Date(a.utcDate) - new Date(b.utcDate))
-        .slice(0, 6);
+  const upcoming = matches
+    .filter(m => upcomingStatuses.includes(m.status))
+    .sort((a, b) => new Date(a.utcDate) - new Date(b.utcDate))
+    .slice(0, 6);
 
-      const combined = [...live, ...finished, ...upcoming];
-      const seen = new Set();
-      const unique = [];
+  const combined = [...live, ...finished, ...upcoming];
+  const seen = new Set();
+  const unique = [];
 
-      for (let i = 0; i < combined.length; i++) {
-        const match = combined[i];
-        if (!seen.has(match.id)) {
-          seen.add(match.id);
-          unique.push(match);
-        }
-      }
-
-      return unique;
+  for (let i = 0; i < combined.length; i++) {
+    const match = combined[i];
+    if (!seen.has(match.id)) {
+      seen.add(match.id);
+      unique.push(match);
     }
+  }
+
+  return unique;
+}
+
 
     function renderApiMatches(matches) {
       const container = document.getElementById("match-results");
