@@ -123,10 +123,6 @@
       color: #b91c1c;
     }
 
-    .message.info {
-      color: #6b7280;
-    }
-
     .cards {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -181,7 +177,7 @@
 
     <h2>Match Results by Team Owner</h2>
     <div class="box" id="match-results">
-      <div class="message info">Loading World Cup matches...</div>
+      <div class="message">Loading World Cup matches...</div>
     </div>
 
     <h2>Draw Results</h2>
@@ -189,13 +185,8 @@
   </div>
 
   <script>
-    // =========================
-    // CHANGE ONLY THIS LINE
-    // =========================
-    const API_TOKEN = "3da31ae0bef3452995c78e09264faa8c";
-
-    // football-data World Cup endpoint
-    const API_URL = "https://api.football-data.org/v4/competitions/WC/matches";
+    // Use your Worker URL here
+    const API_URL = "https://worldcup-api-proxy.choe-soojin.workers.dev";
 
     const drawData = [
       { participant: "Alex Haines", country: "Norway" },
@@ -248,7 +239,6 @@
       { participant: "Tim Hewer", country: "Paraguay" }
     ];
 
-    // Fallback sample matches if API fails
     const fallbackMatches = [
       { homeTeam: "Portugal", awayTeam: "Brazil", homeScore: 2, awayScore: 1, status: "Live", meta: "Sample data" },
       { homeTeam: "Korea", awayTeam: "Uruguay", homeScore: 0, awayScore: 0, status: "Half-time", meta: "Sample data" },
@@ -488,11 +478,10 @@
     }
 
     async function fetchWorldCupMatches() {
-      // Draw results must always show, even if API fails
       renderDraws();
 
-      if (!API_TOKEN || API_TOKEN === "PASTE_YOUR_FOOTBALL_DATA_TOKEN_HERE") {
-        renderFallbackMatches("API token is missing. Showing sample matches instead.");
+      if (!API_URL) {
+        renderFallbackMatches("API URL is missing. Showing sample matches instead.");
         return;
       }
 
@@ -502,9 +491,6 @@
 
         const response = await fetch(API_URL, {
           method: "GET",
-          headers: {
-            "X-Auth-Token": API_TOKEN
-          },
           signal: controller.signal
         });
 
@@ -512,25 +498,24 @@
 
         if (!response.ok) {
           const errorText = await response.text();
-          console.error("football-data HTTP error:", response.status, errorText);
-          renderFallbackMatches("API request failed. Showing sample matches instead.");
+          console.error("Worker HTTP error:", response.status, errorText);
+          renderFallbackMatches("Worker/API request failed. Showing sample matches instead.");
           return;
         }
 
         const data = await response.json();
-        console.log("football-data response:", data);
+        console.log("Worker response:", data);
 
         const matches = Array.isArray(data.matches) ? data.matches : [];
         const selectedMatches = pickMatches(matches);
 
         renderApiMatches(selectedMatches);
       } catch (error) {
-        console.error("Failed to fetch World Cup matches:", error);
+        console.error("Failed to fetch Worker data:", error);
         renderFallbackMatches("Could not load API data. Showing sample matches instead.");
       }
     }
 
-    // Always start here
     fetchWorldCupMatches();
   </script>
 </body>
