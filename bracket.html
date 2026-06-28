@@ -37,6 +37,7 @@ h1{
 .round{
     display:flex;
     flex-direction:column;
+    min-width:260px;
 }
 
 .round h2{
@@ -47,6 +48,7 @@ h1{
 .matches{
     display:flex;
     flex-direction:column;
+    gap:28px;
 }
 
 .match{
@@ -89,36 +91,8 @@ h1{
     margin-bottom:20px;
 }
 
-.match{
-    background:white;
-    border:1px solid #ddd;
-    border-radius:10px;
-    padding:10px;
-    margin:15px 0;
-    box-shadow:0 2px 6px rgba(0,0,0,.08);
-}
-
-.team{
-    display:flex;
-    justify-content:space-between;
-    padding:4px 0;
-}
-
 .team:first-child{
     border-bottom:1px solid #eee;
-}
-
-.name{
-    font-weight:600;
-}
-
-.owner{
-    font-size:12px;
-    color:#666;
-}
-
-.score{
-    font-weight:bold;
 }
 
 .winner{
@@ -146,22 +120,22 @@ h1{
 <div class="matches" id="r32"></div>
 </div>
 
-<div class="round">
+<div class="round" style="margin-top:120px;">
 <h2>Round of 16</h2>
 <div class="matches" id="r16"></div>
 </div>
 
-<div class="round">
-<h2>Quarter-finals</h2>
+<div class="round" style="margin-top:120px;">
+<h2>Round of 16</h2>
 <div class="matches" id="qf"></div>
 </div>
 
-<div class="round">
+<div class="round" style="margin-top:520px;">
 <h2>Semi-finals</h2>
 <div class="matches" id="sf"></div>
 </div>
 
-<div class="round">
+<div class="round" style="margin-top:780px;">
 <h2>Final</h2>
 <div class="matches" id="final"></div>
 </div>
