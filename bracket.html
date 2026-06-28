@@ -1,11 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>World Cup Knockout Stage</title>
 
 <style>
@@ -14,12 +11,13 @@ body{
     margin:0;
     background:#f3f4f6;
     font-family:Arial,sans-serif;
+    color:#111827;
 }
 
 .container{
     max-width:1400px;
     margin:auto;
-    padding:30px;
+    padding:32px;
 }
 
 h1{
@@ -28,24 +26,24 @@ h1{
 }
 
 .stage{
-    margin-bottom:50px;
+    margin-bottom:45px;
 }
 
 .stage h2{
-    margin-bottom:20px;
-    color:#111827;
+    margin-bottom:18px;
+    font-size:28px;
 }
 
 .grid{
     display:grid;
-    grid-template-columns:repeat(auto-fill,minmax(280px,1fr));
+    grid-template-columns:repeat(auto-fit,minmax(320px,1fr));
     gap:18px;
 }
 
 .match{
     background:white;
     border-radius:14px;
-    box-shadow:0 2px 8px rgba(0,0,0,.08);
+    border:1px solid #e5e7eb;
     overflow:hidden;
 }
 
@@ -66,31 +64,57 @@ h1{
 }
 
 .country{
-    font-weight:bold;
+    font-weight:700;
     font-size:17px;
 }
 
 .owner{
-    color:#777;
     font-size:13px;
+    color:#6b7280;
     margin-top:3px;
 }
 
 .score{
-    font-size:20px;
-    font-weight:bold;
+    font-size:22px;
+    font-weight:700;
 }
 
-.status{
-    padding:10px 18px;
-    background:#f8fafc;
-    color:#666;
+.footer{
+    display:flex;
+    justify-content:space-between;
+    padding:12px 18px;
+    background:#f9fafb;
     font-size:13px;
-    border-top:1px solid #ececec;
+    color:#6b7280;
+}
+
+.badge{
+    padding:3px 10px;
+    border-radius:999px;
+    font-weight:600;
+}
+
+.live{
+    background:#fee2e2;
+    color:#b91c1c;
+}
+
+.finished{
+    background:#dcfce7;
+    color:#166534;
+}
+
+.scheduled{
+    background:#e0e7ff;
+    color:#3730a3;
+}
+
+.empty{
+    color:#9ca3af;
+    padding:20px;
 }
 
 </style>
-
 </head>
 
 <body>
@@ -126,7 +150,144 @@ h1{
 
 <script>
 
-const API_URL = "https://worldcup-api-proxy.choe-soojin.workers.dev";
+const API_URL="https://worldcup-api-proxy.choe-soojin.workers.dev";
+
+/* drawData는 지금 index.html에 있는 것을 그대로 붙여넣기 */
+const drawData=[
+
+/* 여기 기존 drawData 그대로 */
+
+];
+
+/* aliases도 기존 것 그대로 붙여넣기 */
+
+const aliases={
+
+/* 기존 aliases 그대로 */
+
+};
+
+function normalize(name){
+    return aliases[name] || name || "TBD";
+}
+
+function owner(country){
+
+    const list=drawData
+        .filter(x=>normalize(x.country)===normalize(country))
+        .map(x=>x.participant);
+
+    return list.length?list.join(", "):"No owner";
+}
+
+function score(match,side){
+
+    if(match.status==="TIMED"||match.status==="SCHEDULED")
+        return "-";
+
+    return(
+        match.score?.fullTime?.[side] ??
+        match.score?.regularTime?.[side] ??
+        match.score?.extraTime?.[side] ??
+        "-"
+    );
+}
+
+function kickoff(match){
+
+    return new Date(match.utcDate).toLocaleString("en-GB",{
+        timeZone:"Europe/London",
+        day:"2-digit",
+        month:"short",
+        hour:"2-digit",
+        minute:"2-digit"
+    });
+
+}
+
+function badge(status){
+
+    if(status==="IN_PLAY"||status==="PAUSED")
+        return '<span class="badge live">LIVE</span>';
+
+    if(status==="FINISHED")
+        return '<span class="badge finished">FT</span>';
+
+    return '<span class="badge scheduled">Scheduled</span>';
+
+}
+
+function renderMatch(match){
+
+    const home=normalize(match.homeTeam?.name);
+    const away=normalize(match.awayTeam?.name);
+
+    return`
+
+<div class="match">
+
+<div class="team">
+<div class="left">
+<div class="country">${home}</div>
+<div class="owner">${owner(home)}</div>
+</div>
+<div class="score">${score(match,"home")}</div>
+</div>
+
+<div class="team">
+<div class="left">
+<div class="country">${away}</div>
+<div class="owner">${owner(away)}</div>
+</div>
+<div class="score">${score(match,"away")}</div>
+</div>
+
+<div class="footer">
+<div>${kickoff(match)}</div>
+<div>${badge(match.status)}</div>
+</div>
+
+</div>
+
+`;
+
+}
+
+function renderStage(matches,stage,id){
+
+    const html=matches
+    .filter(m=>m.stage===stage)
+    .sort((a,b)=>new Date(a.utcDate)-new Date(b.utcDate))
+    .map(renderMatch)
+    .join("");
+
+    document.getElementById(id).innerHTML=
+        html || '<div class="empty">No matches yet.</div>';
+
+}
+
+async function load(){
+
+    const res=await fetch(API_URL);
+    const data=await res.json();
+
+    const matches=data.matches||[];
+
+    renderStage(matches,"LAST_32","r32");
+    renderStage(matches,"LAST_16","r16");
+    renderStage(matches,"QUARTER_FINALS","qf");
+    renderStage(matches,"SEMI_FINALS","sf");
+    renderStage(matches,"FINAL","final");
+
+}
+
+load();
+
+</script>
+
+</body>
+</html>
+
 
 const drawData = [
   { participant:"Alex Haines", country:"Norway"},
@@ -186,12 +347,18 @@ const aliases = {
   "IR Iran":"Iran",
   "Turkey":"Türkiye",
   "United States of America":"United States",
+  "USA":"United States",
   "Curaçao":"Curacao",
   "Bosnia and Herzegovina":"Bosnia & Herzegovina",
+  "Bosnia-Herzegovina":"Bosnia & Herzegovina",
+  "Bosnia And Herzegovina":"Bosnia & Herzegovina",
   "Cote d'Ivoire":"Côte d’Ivoire",
+  "Côte d'Ivoire":"Côte d’Ivoire",
   "Ivory Coast":"Côte d’Ivoire",
   "Cape Verde":"Cabo Verde",
-  "DR Congo":"Congo (DRC)"
+  "Cape Verde Islands":"Cabo Verde",
+  "DR Congo":"Congo (DRC)",
+  "Congo DR":"Congo (DRC)"
 };
 
 function normalize(name){
@@ -199,13 +366,14 @@ function normalize(name){
 }
 
 function owner(country){
-    return drawData
+    const list = drawData
         .filter(x => normalize(x.country) === normalize(country))
-        .map(x => x.participant)
-        .join(", ");
+        .map(x => x.participant);
+
+    return list.length ? list.join(", ") : "No owner";
 }
 
-function score(match, side){
+function getScore(match, side){
 
     if(match.status==="TIMED" || match.status==="SCHEDULED"){
         return "-";
@@ -215,8 +383,40 @@ function score(match, side){
         match.score?.fullTime?.[side] ??
         match.score?.regularTime?.[side] ??
         match.score?.extraTime?.[side] ??
+        match.score?.halfTime?.[side] ??
         "-"
     );
+
+}
+
+function getKickoff(match){
+
+    return new Date(match.utcDate).toLocaleString("en-GB",{
+        timeZone:"Europe/London",
+        day:"2-digit",
+        month:"short",
+        hour:"2-digit",
+        minute:"2-digit"
+    });
+
+}
+
+function getBadge(status){
+
+    switch(status){
+
+        case "IN_PLAY":
+        case "PAUSED":
+            return '<span class="badge live">LIVE</span>';
+
+        case "FINISHED":
+            return '<span class="badge finished">FT</span>';
+
+        default:
+            return '<span class="badge scheduled">Scheduled</span>';
+
+    }
+
 }
 
 function renderMatch(match){
@@ -225,63 +425,56 @@ function renderMatch(match){
     const away = normalize(match.awayTeam?.name);
 
     return `
-    <div class="match">
+<div class="match">
 
-        <div class="team">
-            <div class="left">
-                <div class="country">${home}</div>
-                <div class="owner">${owner(home) || "No owner"}</div>
-            </div>
-            <div class="score">${score(match,"home")}</div>
+    <div class="team">
+        <div class="left">
+            <div class="country">${home}</div>
+            <div class="owner">${owner(home)}</div>
         </div>
-
-        <div class="team">
-            <div class="left">
-                <div class="country">${away}</div>
-                <div class="owner">${owner(away) || "No owner"}</div>
-            </div>
-            <div class="score">${score(match,"away")}</div>
-        </div>
-
-const kickoff = new Date(match.utcDate).toLocaleString("en-GB",{
-    timeZone:"Europe/London",
-    day:"2-digit",
-    month:"short",
-    hour:"2-digit",
-    minute:"2-digit"
-});
-
-...
-
-<div class="status">
-    ${kickoff} • ${match.status}
-</div>
-
+        <div class="score">${getScore(match,"home")}</div>
     </div>
-    `;
+
+    <div class="team">
+        <div class="left">
+            <div class="country">${away}</div>
+            <div class="owner">${owner(away)}</div>
+        </div>
+        <div class="score">${getScore(match,"away")}</div>
+    </div>
+
+    <div class="footer">
+        <div>${getKickoff(match)}</div>
+        <div>${getBadge(match.status)}</div>
+    </div>
+
+</div>
+`;
+
 }
 
 function renderStage(matches, stage, id){
 
     const html = matches
         .filter(m => m.stage === stage)
-       .sort((a,b)=>{
+        .sort((a,b)=>{
 
-    if(a.utcDate===b.utcDate){
-        return a.id-b.id;
-    }
+            const t = new Date(a.utcDate) - new Date(b.utcDate);
 
-    return new Date(a.utcDate)-new Date(b.utcDate);
+            if(t!==0) return t;
 
-})
+            return a.id - b.id;
+
+        })
         .map(renderMatch)
         .join("");
 
     document.getElementById(id).innerHTML =
-        html || "<p>No matches yet.</p>";
+        html || '<div class="empty">No matches yet.</div>';
+
 }
 
-async function loadBracket(){
+async function load(){
 
     try{
 
@@ -298,22 +491,22 @@ async function loadBracket(){
         renderStage(matches,"FINAL","final");
 
     }
-    catch(err){
+    catch(e){
 
-        console.error(err);
+        console.error(e);
 
         document.querySelectorAll(".grid").forEach(g=>{
-            g.innerHTML="<p>Unable to load matches.</p>";
+            g.innerHTML='<div class="empty">Unable to load matches.</div>';
         });
 
     }
 
 }
 
-loadBracket();
+load();
 
 </script>
 
 </body>
-
 </html>
+
