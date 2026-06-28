@@ -191,13 +191,81 @@
     background:white;
 }
 
+    .summary-cards{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:16px;
+    margin:28px 0 34px;
+}
+
+.summary-card{
+    background:white;
+    border:1px solid #e5e7eb;
+    border-radius:14px;
+    padding:18px;
+}
+
+.summary-title{
+    font-size:14px;
+    color:#6b7280;
+    margin-bottom:10px;
+}
+
+.summary-value{
+    font-size:26px;
+    font-weight:700;
+    color:#1e3a8a;
+}
+
+@media(max-width:700px){
+
+.summary-cards{
+    grid-template-columns:1fr;
+}
+
+.summary-value{
+    font-size:24px;
+}
+
+}
+
+.summary-progress{
+    margin-top:8px;
+    font-size:14px;
+    color:#6b7280;
+}
     
   </style>
 </head>
 <body>
   <div class="container">
     <h1>🏆 World Cup Sweepstake</h1>
+<div class="summary-cards">
 
+  <div class="summary-card">
+    <div class="summary-title">Matches Today</div>
+    <div class="summary-value" id="today-count">-</div>
+  </div>
+
+  <div class="summary-card">
+    <div class="summary-title">Live</div>
+    <div class="summary-value" id="live-count">-</div>
+  </div>
+
+<div class="summary-card">
+    <div class="summary-title">Current Stage</div>
+
+    <div class="summary-value" id="current-stage">
+        -
+    </div>
+
+    <div class="summary-progress" id="current-progress">
+        -
+    </div>
+
+</div>
+
+</div>
     <h2>Match Results by Team Owner</h2>
     <div class="section-note">
       Showing the latest 8 finished matches first, then all live matches, followed by the next 6 upcoming matches in chronological order.
@@ -558,10 +626,67 @@
         const data = await response.json();
         console.log("Worker response:", data);
 
-        const matches = Array.isArray(data.matches) ? data.matches : [];
-        const selectedMatches = pickMatches(matches);
+const matches = Array.isArray(data.matches) ? data.matches : [];
 
-        renderApiMatches(selectedMatches);
+const selectedMatches = pickMatches(matches);
+
+renderApiMatches(selectedMatches);
+
+// ===== Summary cards =====
+
+const today = new Date().toISOString().slice(0,10);
+
+const todayCount = matches.filter(m =>
+    m.utcDate.startsWith(today)
+).length;
+
+const liveCount = matches.filter(m =>
+    m.status==="IN_PLAY" || m.status==="PAUSED"
+).length;
+
+const stageOrder = [
+    "FINAL",
+    "SEMI_FINALS",
+    "QUARTER_FINALS",
+    "LAST_16",
+    "LAST_32",
+    "GROUP_STAGE"
+];
+
+let currentStage = "-";
+
+for(const stage of stageOrder){
+
+    if(matches.some(m =>
+        m.status!=="FINISHED" &&
+        m.stage===stage
+    )){
+const stageNames = {
+    GROUP_STAGE: "Group Stage",
+    LAST_32: "Round of 32",
+    LAST_16: "Round of 16",
+    QUARTER_FINALS: "Quarter-finals",
+    SEMI_FINALS: "Semi-finals",
+    FINAL: "Final"
+};
+
+currentStage = stageNames[stage] || stage;
+        break;
+    }
+
+}
+
+document.getElementById("today-count").textContent = todayCount;
+document.getElementById("live-count").textContent = liveCount;
+document.getElementById("current-stage").textContent = currentStage;
+        const currentMatches = matches.filter(m => m.stage === stage);
+
+const finishedMatches = currentMatches.filter(
+    m => m.status === "FINISHED"
+).length;
+
+document.getElementById("current-progress").textContent =
+    `${finishedMatches} / ${currentMatches.length} Matches Complete`;
       } catch (error) {
         console.error("Failed to fetch Worker data:", error);
         renderFallbackMatches("Could not load API data. Showing sample matches instead.");
