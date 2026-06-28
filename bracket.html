@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>World Cup Bracket</title>
+<title>World Cup Knockout Bracket</title>
 
 <style>
 
@@ -14,27 +14,26 @@ body{
     font-family:Arial,sans-serif;
 }
 
-.container{
-    width:1700px;
-    margin:auto;
-    padding:30px;
-}
-
 h1{
     text-align:center;
-    margin-bottom:40px;
+    margin:30px 0;
+}
+
+.wrapper{
+    width:max-content;
+    margin:auto;
+    padding:30px;
 }
 
 .bracket{
     display:flex;
     gap:60px;
-    overflow-x:auto;
-    padding-bottom:30px;
+    align-items:flex-start;
 }
 
 .round{
-    width:260px;
-    flex-shrink:0;
+    display:flex;
+    flex-direction:column;
 }
 
 .round h2{
@@ -42,20 +41,25 @@ h1{
     margin-bottom:20px;
 }
 
+.matches{
+    display:flex;
+    flex-direction:column;
+}
+
 .match{
+    width:240px;
     background:white;
-    border-radius:12px;
-    border:1px solid #ddd;
-    margin-bottom:24px;
+    border-radius:10px;
+    box-shadow:0 2px 5px rgba(0,0,0,.12);
+    margin:10px 0;
     overflow:hidden;
-    box-shadow:0 2px 5px rgba(0,0,0,.08);
 }
 
 .team{
+    padding:10px 14px;
+    border-bottom:1px solid #eee;
     display:flex;
     justify-content:space-between;
-    padding:12px;
-    border-bottom:1px solid #eee;
 }
 
 .team:last-child{
@@ -67,7 +71,7 @@ h1{
 }
 
 .owner{
-    color:#888;
+    color:#777;
     font-size:12px;
 }
 
@@ -75,58 +79,52 @@ h1{
     font-weight:bold;
 }
 
-.winner{
-    background:#dcfce7;
-}
-
-.live{
-    background:#fee2e2;
-}
-
 </style>
-
 </head>
 
 <body>
 
-<div class="container">
+<h1>🏆 World Cup Knockout Stage</h1>
 
-<h1>🏆 World Cup Bracket</h1>
+<div class="wrapper">
 
 <div class="bracket">
 
 <div class="round">
 <h2>Round of 32</h2>
-<div id="r32"></div>
+<div class="matches" id="r32"></div>
 </div>
 
 <div class="round">
 <h2>Round of 16</h2>
-<div id="r16"></div>
+<div class="matches" id="r16"></div>
 </div>
 
 <div class="round">
 <h2>Quarter-finals</h2>
-<div id="qf"></div>
+<div class="matches" id="qf"></div>
 </div>
 
 <div class="round">
 <h2>Semi-finals</h2>
-<div id="sf"></div>
+<div class="matches" id="sf"></div>
 </div>
 
 <div class="round">
 <h2>Final</h2>
-<div id="final"></div>
+<div class="matches" id="final"></div>
 </div>
 
 </div>
 
 </div>
 
-const API_URL="https://worldcup-api-proxy.choe-soojin.workers.dev";
+<script>
 
-const drawData=[
+
+const API_URL = "https://worldcup-api-proxy.choe-soojin.workers.dev";
+
+const drawData = [
   { participant:"Alex Haines", country:"Norway"},
   { participant:"Allison Clark", country:"South Africa"},
   { participant:"Andrew Snoad", country:"Morocco"},
@@ -183,181 +181,96 @@ const aliases={
 "South Korea":"Korea",
 "IR Iran":"Iran",
 "Turkey":"Türkiye",
-"USA":"United States",
 "United States of America":"United States",
 "Curaçao":"Curacao",
 "Bosnia and Herzegovina":"Bosnia & Herzegovina",
+"Cote d'Ivoire":"Côte d’Ivoire",
+"Ivory Coast":"Côte d’Ivoire",
 "Cape Verde":"Cabo Verde",
-"DR Congo":"Congo (DRC)",
-"Congo DR":"Congo (DRC)"
+"DR Congo":"Congo (DRC)"
 };
 
-function normalise(name){
+function normalize(name){
     return aliases[name] || name;
 }
 
 function owner(country){
-    const c=normalise(country);
-
+    country=normalize(country);
     const list=drawData
-      .filter(x=>normalise(x.country)==c)
-      .map(x=>x.participant);
+        .filter(x=>normalize(x.country)==country)
+        .map(x=>x.participant);
 
     return list.join(", ");
 }
 
-function score(match,side){
+function score(match, side){
 
-    if(match.status=="TIMED") return "-";
+    if(match.status==="TIMED" || match.status==="SCHEDULED"){
+        return "-";
+    }
 
-    if(match.score.fullTime && match.score.fullTime[side]!=null)
-        return match.score.fullTime[side];
-
-    if(match.score.regularTime && match.score.regularTime[side]!=null)
-        return match.score.regularTime[side];
-
-    return "-";
+    return (
+        match.score?.fullTime?.[side] ??
+        match.score?.regularTime?.[side] ??
+        match.score?.extraTime?.[side] ??
+        "-"
+    );
 }
 
-function matchCard(match){
+function renderMatch(match){
 
-    const home=normalise(match.homeTeam?.name || "TBD");
-    const away=normalise(match.awayTeam?.name || "TBD");
-
-    const hs=score(match,"home");
-    const as=score(match,"away");
+    const home=normalize(match.homeTeam?.name || "TBD");
+    const away=normalize(match.awayTeam?.name || "TBD");
 
     return `
 <div class="match">
+    <div class="team">
+        <div>
+            <div class="name">${home}</div>
+            <div class="owner">${owner(home)}</div>
+        </div>
+        <div class="score">${score(match,"home")}</div>
+    </div>
 
-<div class="team">
-<div>
-<div class="name">${home}</div>
-<div class="owner">${owner(home)}</div>
-</div>
-<div class="score">${hs}</div>
-</div>
-
-<div class="team">
-<div>
-<div class="name">${away}</div>
-<div class="owner">${owner(away)}</div>
-</div>
-<div class="score">${as}</div>
-</div>
-
+    <div class="team">
+        <div>
+            <div class="name">${away}</div>
+            <div class="owner">${owner(away)}</div>
+        </div>
+        <div class="score">${score(match,"away")}</div>
+    </div>
 </div>
 `;
 }
 
-function winner(match){
+function renderStage(matches, stage, elementId){
 
-    if(match.status!="FINISHED")
-        return null;
+    const html=matches
+        .filter(m=>m.stage===stage)
+        .sort((a,b)=>new Date(a.utcDate)-new Date(b.utcDate))
+        .map(renderMatch)
+        .join("");
 
-    const h=match.score.fullTime.home;
-    const a=match.score.fullTime.away;
-
-    if(h>a) return normalise(match.homeTeam.name);
-
-    if(a>h) return normalise(match.awayTeam.name);
-
-    return "TBD";
+    document.getElementById(elementId).innerHTML=html;
 }
-
-function placeholderCard(){
-
-    return `
-<div class="match">
-
-<div class="team">
-<div>
-<div class="name">TBD</div>
-<div class="owner"></div>
-</div>
-</div>
-
-<div class="team">
-<div>
-<div class="name">TBD</div>
-<div class="owner"></div>
-</div>
-</div>
-
-</div>
-`;
-
-}
-
-function simpleCard(home,away){
-
-return `
-<div class="match">
-
-<div class="team">
-<div>
-<div class="name">${home}</div>
-<div class="owner">${owner(home)}</div>
-</div>
-</div>
-
-<div class="team">
-<div>
-<div class="name">${away}</div>
-<div class="owner">${owner(away)}</div>
-</div>
-</div>
-
-</div>
-`;
-
-}
-
 
 async function loadBracket(){
 
     const res=await fetch(API_URL);
-
     const data=await res.json();
 
-    const matches=data.matches;
+    const matches=data.matches || [];
 
-    const r32=matches
-        .filter(x=>x.stage=="LAST_32")
-        .sort((a,b)=>new Date(a.utcDate)-new Date(b.utcDate));
-
-document.getElementById("r32").innerHTML=
-    r32.map(matchCard).join("");
-
-const r16=[];
-
-for(let i=0;i<r32.length;i+=2){
-
-    const w1=winner(r32[i]) || "TBD";
-    const w2=winner(r32[i+1]) || "TBD";
-
-    r16.push(simpleCard(w1,w2));
-
-}
-
-document.getElementById("r16").innerHTML=r16.join("");
-
-document.getElementById("qf").innerHTML=
-Array(4).fill(placeholderCard()).join("");
-
-document.getElementById("sf").innerHTML=
-Array(2).fill(placeholderCard()).join("");
-
-document.getElementById("final").innerHTML=
-placeholderCard();
-
-}
-
+    renderStage(matches,"LAST_32","r32");
+    renderStage(matches,"LAST_16","r16");
+    renderStage(matches,"QUARTER_FINALS","qf");
+    renderStage(matches,"SEMI_FINALS","sf");
+    renderStage(matches,"FINAL","final");
 }
 
 loadBracket();
 
+</script>
+
 </body>
-
 </html>
-
