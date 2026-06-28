@@ -257,7 +257,7 @@
     <!-- Draw Results -->
     <h2>Draw Results</h2>
     <div class="section-note">
-      Cards with a grey background have been eliminated from the tournament.
+      Teams with a white card are still fighting. May the best team win (especially my team)!
     </div>
     <div class="cards" id="draw-results"></div>
 
@@ -516,7 +516,7 @@
           const isOut = eliminated.has(normalizeCountry(item.country));
           return `
           <div class="card${isOut ? " eliminated" : ""}">
-            <div class="country">${item.country}${isOut ? " ✕" : ""}</div>
+            <div class="country">${item.country}</div>
             <div class="participant">${item.participant}</div>
           </div>`;
         })
@@ -694,6 +694,8 @@
     }
 
     fetchWorldCupMatches();
+    // Auto-refresh every 5 minutes
+    setInterval(fetchWorldCupMatches, 5 * 60 * 1000);
   </script>
 </body>
 </html>
