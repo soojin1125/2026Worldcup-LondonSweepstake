@@ -93,11 +93,8 @@
     /* ── Draw cards ── */
     .cards {
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
       gap: 16px;
-    }
-    @media (max-width: 700px) {
-      .cards { grid-template-columns: repeat(2, 1fr); }
     }
     .card {
       background: white;
@@ -123,8 +120,16 @@
     }
     .grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      grid-template-columns: repeat(4, 1fr);
       gap: 18px;
+    }
+    #sf { grid-template-columns: repeat(2, 1fr); }
+    #final { grid-template-columns: 1fr; }
+    @media (max-width: 900px) {
+      .grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 500px) {
+      .grid { grid-template-columns: 1fr; }
     }
     .match {
       background: white;
