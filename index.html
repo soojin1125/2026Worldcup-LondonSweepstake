@@ -11,40 +11,30 @@
       background: #f3f4f6;
       color: #1f2937;
     }
-
     .container {
       max-width: 1250px;
       margin: 0 auto;
       padding: 24px;
     }
-
     h1 {
       text-align: center;
       margin-bottom: 8px;
       font-size: 2.2rem;
       color: #111827;
     }
-
-    .subtitle {
-      text-align: center;
-      color: #6b7280;
-      margin-bottom: 32px;
-      font-size: 1.1rem;
-    }
-
     h2 {
       margin-top: 32px;
       margin-bottom: 8px;
       font-size: 2rem;
       color: #111827;
     }
-
     .section-note {
       color: #6b7280;
       font-size: 0.95rem;
       margin-bottom: 16px;
     }
 
+    /* ── Match Results (list style) ── */
     .box {
       background: white;
       border: 1px solid #e5e7eb;
@@ -52,89 +42,60 @@
       padding: 8px 18px;
       margin-bottom: 32px;
     }
-
     .match-item {
       padding: 18px 0;
       border-bottom: 1px solid #e5e7eb;
     }
-
-    .match-item:last-child {
-      border-bottom: none;
-    }
-
+    .match-item:last-child { border-bottom: none; }
     .match-line {
       display: grid;
       grid-template-columns: 1fr auto 1fr;
       align-items: center;
       column-gap: 16px;
     }
-
-    .team-left,
-    .team-right {
+    .team-left, .team-right {
       display: flex;
       align-items: baseline;
       gap: 6px;
       min-width: 0;
       flex-wrap: wrap;
     }
-
-    .team-left {
-      justify-content: flex-start;
-      text-align: left;
-    }
-
-    .team-right {
-      justify-content: flex-end;
-      text-align: right;
-    }
-
+    .team-left { justify-content: flex-start; text-align: left; }
+    .team-right { justify-content: flex-end; text-align: right; }
     .team-name {
       font-weight: 700;
       color: #111827;
       white-space: nowrap;
     }
-
-    .owner {
-      color: #6b7280;
-      font-size: 0.95rem;
-      white-space: nowrap;
-    }
-
-    .score {
+    .score-inline {
       font-weight: 700;
       font-size: 1.1rem;
       color: #111827;
       text-align: center;
       min-width: 72px;
     }
-
     .status {
       margin-top: 8px;
       color: #6b7280;
       font-size: 0.9rem;
     }
-
     .meta {
       margin-top: 4px;
       color: #6b7280;
       font-size: 0.88rem;
     }
-
     .message {
       padding: 18px 0;
       color: #6b7280;
     }
+    .message.error { color: #b91c1c; }
 
-    .message.error {
-      color: #b91c1c;
-    }
-
+    /* ── Draw cards ── */
     .cards {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
       gap: 16px;
     }
-
     .card {
       background: white;
       border: 1px solid #e5e7eb;
@@ -142,19 +103,81 @@
       padding: 16px;
       text-align: left;
     }
-
-    .country {
+    .card .country {
       color: #1e3a8a;
       font-weight: 700;
       margin-bottom: 8px;
       font-size: 1rem;
     }
+    .participant { color: #6b7280; font-size: 0.95rem; }
 
-    .participant {
-      color: #6b7280;
-      font-size: 0.95rem;
+    /* ── Bracket cards ── */
+    .stage { margin-bottom: 40px; }
+    .stage h3 {
+      margin: 0 0 16px;
+      font-size: 24px;
+      color: #111827;
     }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 18px;
+    }
+    .match {
+      background: white;
+      border: 1px solid #e5e7eb;
+      border-radius: 14px;
+      overflow: hidden;
+    }
+    .team {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px 18px;
+    }
+    .team:first-child { border-bottom: 1px solid #ececec; }
+    .left { display: flex; flex-direction: column; }
+    .country {
+      font-weight: 700;
+      font-size: 17px;
+      color: #111827;
+    }
+    .owner {
+      font-size: 13px;
+      color: #6b7280;
+      margin-top: 3px;
+    }
+    .score {
+      font-size: 22px;
+      font-weight: 700;
+      color: #111827;
+    }
+    .footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 18px;
+      background: #f9fafb;
+      font-size: 13px;
+      color: #6b7280;
+    }
+    .badge {
+      padding: 3px 10px;
+      border-radius: 999px;
+      font-weight: 600;
+      font-size: 12px;
+    }
+    .live    { background: #fee2e2; color: #b91c1c; }
+    .finished { background: #dcfce7; color: #166534; }
+    .scheduled { background: #e0e7ff; color: #3730a3; }
+    .empty { color: #9ca3af; padding: 20px; }
 
+    .bts-note {
+      font-size: 14px;
+      font-weight: 500;
+      color: #7c3aed;
+      margin-left: 10px;
+    }
     .footer-note {
       color: #6b7280;
       font-size: 0.95rem;
@@ -163,60 +186,55 @@
     }
 
     @media (max-width: 850px) {
-      .match-line {
-        grid-template-columns: 1fr;
-        row-gap: 8px;
-      }
-
-      .team-right {
-        justify-content: flex-start;
-        text-align: left;
-      }
-
-      .score {
-        text-align: left;
-      }
-
-      h2 {
-        font-size: 1.7rem;
-      }
+      .match-line { grid-template-columns: 1fr; row-gap: 8px; }
+      .team-right { justify-content: flex-start; text-align: left; }
+      .score-inline { text-align: left; }
+      h2 { font-size: 1.7rem; }
     }
-    
-.bracket-frame{
-    width:100%;
-    height:2400px;
-    border:none;
-    border-radius:16px;
-    margin-bottom:32px;
-    background:white;
-}
-
-    
   </style>
 </head>
 <body>
   <div class="container">
     <h1>🏆 World Cup Sweepstake</h1>
 
+    <!-- Match Results -->
     <h2>Match Results by Team Owner</h2>
     <div class="section-note">
-      Showing the latest 8 finished matches first, then all live matches, followed by the next 6 upcoming matches in chronological order.
+      Showing the latest 8 finished matches first, then all live matches, followed by the next 6 upcoming matches.
     </div>
     <div class="box" id="match-results">
       <div class="message">Loading World Cup matches...</div>
     </div>
 
-<h2>Knockout Stage</h2>
+    <!-- Knockout Bracket -->
+    <h2>Knockout Stage</h2>
+    <div class="section-note">Live knockout bracket updated automatically.</div>
 
-<div class="section-note">
-Live knockout bracket updated automatically.
-</div>
+    <div class="stage">
+      <h3>Round of 32</h3>
+      <div class="grid" id="r32"></div>
+    </div>
+    <div class="stage">
+      <h3>Round of 16</h3>
+      <div class="grid" id="r16"></div>
+    </div>
+    <div class="stage">
+      <h3>Quarter-finals</h3>
+      <div class="grid" id="qf"></div>
+    </div>
+    <div class="stage">
+      <h3>Semi-finals</h3>
+      <div class="grid" id="sf"></div>
+    </div>
+    <div class="stage">
+      <h3>
+        Final
+        <span class="bts-note">💜 Halftime Show: BTS and Others</span>
+      </h3>
+      <div class="grid" id="final"></div>
+    </div>
 
-<iframe
-    src="bracket.html"
-    class="bracket-frame">
-</iframe>
-    
+    <!-- Draw Results -->
     <h2>Draw Results</h2>
     <div class="cards" id="draw-results"></div>
 
@@ -224,132 +242,124 @@ Live knockout bracket updated automatically.
   </div>
 
   <script>
-    // Change this only if your Worker URL is different
     const API_URL = "https://worldcup-api-proxy.choe-soojin.workers.dev";
 
     const drawData = [
-      { participant: "Alex Haines", country: "Norway" },
-      { participant: "Allison Clark", country: "South Africa" },
-      { participant: "Andrew Snoad", country: "Morocco" },
-      { participant: "Andrew Snoad", country: "Switzerland" },
-      { participant: "Anna Smith", country: "Argentina" },
-      { participant: "Charlie Finchett", country: "Belgium" },
-      { participant: "Chris Flach", country: "Jordan" },
-      { participant: "Chris Flach", country: "Mexico" },
-      { participant: "Dami Osibeluwo", country: "Austria" },
-      { participant: "David Mann", country: "Congo (DRC)" },
-      { participant: "David Mann", country: "Australia" },
-      { participant: "Ed Hull", country: "France" },
-      { participant: "Ed Hull", country: "England" },
-      { participant: "Emily Davis", country: "Japan" },
-      { participant: "Gary Hutton", country: "Panama" },
-      { participant: "Gary Hutton", country: "Ecuador" },
-      { participant: "Gerri Speirs", country: "United States" },
-      { participant: "Jack Cornish", country: "Senegal" },
-      { participant: "Joanna Guentangue", country: "Colombia" },
-      { participant: "Joseph Bluemel", country: "Canada" },
-      { participant: "Katie Lovegrove", country: "Qatar" },
-      { participant: "Luke Armitage", country: "Iran" },
-      { participant: "Mark Wallace", country: "Scotland" },
-      { participant: "Matthew Miller", country: "Türkiye" },
-      { participant: "Matthew Miller", country: "Saudi Arabia" },
-      { participant: "Nibash Gun", country: "Germany" },
-      { participant: "Nicholas Crowe", country: "Curacao" },
-      { participant: "Nicholas Crowe", country: "Ghana" },
-      { participant: "Niel Du Preez", country: "Brazil" },
-      { participant: "Nikki Foxall", country: "Egypt" },
-      { participant: "Patrick Ahern", country: "Haiti" },
-      { participant: "Peter Benning", country: "Croatia" },
-      { participant: "Peter Benning", country: "Spain" },
-      { participant: "Peter Robinson", country: "Cabo Verde" },
-      { participant: "Peter Robinson", country: "Uzbekistan" },
-      { participant: "Rob McBride", country: "Tunisia" },
-      { participant: "Samuel Davies", country: "Bosnia & Herzegovina" },
-      { participant: "Samuel Davies", country: "Iraq" },
-      { participant: "Sarah Fallon", country: "Côte d’Ivoire" },
-      { participant: "Sean Berry", country: "Czechia" },
-      { participant: "Shayna Gail Velasquez", country: "Sweden" },
-      { participant: "Soojin Choe", country: "Uruguay" },
-      { participant: "Soojin Choe", country: "Portugal" },
-      { participant: "Terry Gell", country: "Korea" },
-      { participant: "Thomas Blunt", country: "New Zealand" },
-      { participant: "Thomas Blunt", country: "Netherlands" },
-      { participant: "Tim Hewer", country: "Algeria" },
-      { participant: "Tim Hewer", country: "Paraguay" }
+      { participant: "Alex Haines",           country: "Norway" },
+      { participant: "Allison Clark",          country: "South Africa" },
+      { participant: "Andrew Snoad",           country: "Morocco" },
+      { participant: "Andrew Snoad",           country: "Switzerland" },
+      { participant: "Anna Smith",             country: "Argentina" },
+      { participant: "Charlie Finchett",       country: "Belgium" },
+      { participant: "Chris Flach",            country: "Jordan" },
+      { participant: "Chris Flach",            country: "Mexico" },
+      { participant: "Dami Osibeluwo",         country: "Austria" },
+      { participant: "David Mann",             country: "Congo (DRC)" },
+      { participant: "David Mann",             country: "Australia" },
+      { participant: "Ed Hull",                country: "France" },
+      { participant: "Ed Hull",                country: "England" },
+      { participant: "Emily Davis",            country: "Japan" },
+      { participant: "Gary Hutton",            country: "Panama" },
+      { participant: "Gary Hutton",            country: "Ecuador" },
+      { participant: "Gerri Speirs",           country: "United States" },
+      { participant: "Jack Cornish",           country: "Senegal" },
+      { participant: "Joanna Guentangue",      country: "Colombia" },
+      { participant: "Joseph Bluemel",         country: "Canada" },
+      { participant: "Katie Lovegrove",        country: "Qatar" },
+      { participant: "Luke Armitage",          country: "Iran" },
+      { participant: "Mark Wallace",           country: "Scotland" },
+      { participant: "Matthew Miller",         country: "Türkiye" },
+      { participant: "Matthew Miller",         country: "Saudi Arabia" },
+      { participant: "Nibash Gun",             country: "Germany" },
+      { participant: "Nicholas Crowe",         country: "Curacao" },
+      { participant: "Nicholas Crowe",         country: "Ghana" },
+      { participant: "Niel Du Preez",          country: "Brazil" },
+      { participant: "Nikki Foxall",           country: "Egypt" },
+      { participant: "Patrick Ahern",          country: "Haiti" },
+      { participant: "Peter Benning",          country: "Croatia" },
+      { participant: "Peter Benning",          country: "Spain" },
+      { participant: "Peter Robinson",         country: "Cabo Verde" },
+      { participant: "Peter Robinson",         country: "Uzbekistan" },
+      { participant: "Rob McBride",            country: "Tunisia" },
+      { participant: "Samuel Davies",          country: "Bosnia & Herzegovina" },
+      { participant: "Samuel Davies",          country: "Iraq" },
+      { participant: "Sarah Fallon",           country: "Côte d'Ivoire" },
+      { participant: "Sean Berry",             country: "Czechia" },
+      { participant: "Shayna Gail Velasquez",  country: "Sweden" },
+      { participant: "Soojin Choe",            country: "Uruguay" },
+      { participant: "Soojin Choe",            country: "Portugal" },
+      { participant: "Terry Gell",             country: "Korea" },
+      { participant: "Thomas Blunt",           country: "New Zealand" },
+      { participant: "Thomas Blunt",           country: "Netherlands" },
+      { participant: "Tim Hewer",              country: "Algeria" },
+      { participant: "Tim Hewer",              country: "Paraguay" }
     ];
 
     const fallbackMatches = [
-      { homeTeam: "Portugal", awayTeam: "Brazil", homeScore: 2, awayScore: 1, status: "Live", meta: "Sample data" },
-      { homeTeam: "Korea", awayTeam: "Uruguay", homeScore: 0, awayScore: 0, status: "Half-time", meta: "Sample data" },
-      { homeTeam: "Netherlands", awayTeam: "England", homeScore: 1, awayScore: 3, status: "Finished", meta: "Sample data" }
+      { homeTeam: "Portugal",    awayTeam: "Brazil",      homeScore: 2, awayScore: 1, status: "Live",      meta: "Sample data" },
+      { homeTeam: "Korea",       awayTeam: "Uruguay",     homeScore: 0, awayScore: 0, status: "Half-time", meta: "Sample data" },
+      { homeTeam: "Netherlands", awayTeam: "England",     homeScore: 1, awayScore: 3, status: "Finished",  meta: "Sample data" }
     ];
 
     const countryAliases = {
-      "Korea Republic": "Korea",
-      "Republic of Korea": "Korea",
-      "South Korea": "Korea",
-      "IR Iran": "Iran",
-      "Iran": "Iran",
-      "Türkiye": "Türkiye",
-      "Turkey": "Türkiye",
+      "Korea Republic":           "Korea",
+      "Republic of Korea":        "Korea",
+      "South Korea":              "Korea",
+      "IR Iran":                  "Iran",
+      "Türkiye":                  "Türkiye",
+      "Turkey":                   "Türkiye",
       "United States of America": "United States",
-      "USA": "United States",
-      "Curaçao": "Curacao",
-
-      // Bosnia fix
-      "Bosnia and Herzegovina": "Bosnia & Herzegovina",
-      "Bosnia-Herzegovina": "Bosnia & Herzegovina",
-      "Bosnia And Herzegovina": "Bosnia & Herzegovina",
-
-      "Cote d'Ivoire": "Côte d’Ivoire",
-      "Côte d'Ivoire": "Côte d’Ivoire",
-      "Ivory Coast": "Côte d’Ivoire",
-      "Cape Verde": "Cabo Verde",
-      "Cape Verde Islands": "Cabo Verde",
-      "DR Congo": "Congo (DRC)",
-      "Congo DR": "Congo (DRC)"
+      "USA":                      "United States",
+      "Curaçao":                  "Curacao",
+      "Bosnia and Herzegovina":   "Bosnia & Herzegovina",
+      "Bosnia-Herzegovina":       "Bosnia & Herzegovina",
+      "Bosnia And Herzegovina":   "Bosnia & Herzegovina",
+      "Cote d'Ivoire":            "Côte d'Ivoire",
+      "Ivory Coast":              "Côte d'Ivoire",
+      "Cape Verde":               "Cabo Verde",
+      "Cape Verde Islands":       "Cabo Verde",
+      "DR Congo":                 "Congo (DRC)",
+      "Congo DR":                 "Congo (DRC)"
     };
 
     const statusLabels = {
-      IN_PLAY: "Live",
-      PAUSED: "Half-time",
-      FINISHED: "Finished",
-      TIMED: "Scheduled",
+      IN_PLAY:   "Live",
+      PAUSED:    "Half-time",
+      FINISHED:  "Finished",
+      TIMED:     "Scheduled",
       SCHEDULED: "Scheduled",
       POSTPONED: "Postponed",
       SUSPENDED: "Suspended",
       CANCELLED: "Cancelled"
     };
 
+    const stageNames = {
+      GROUP_STAGE:    "Group Stage",
+      LAST_32:        "Round of 32",
+      LAST_16:        "Round of 16",
+      QUARTER_FINALS: "Quarter-finals",
+      SEMI_FINALS:    "Semi-finals",
+      FINAL:          "Final"
+    };
+
+    // ── Utilities ──────────────────────────────────────────────
+
     function normalizeCountry(name) {
-      if (!name) return "";
-
+      if (!name) return "TBD";
       const cleaned = name.trim();
-
-      if (countryAliases[cleaned]) {
-        return countryAliases[cleaned];
-      }
-
-      if (
-        cleaned === "Bosnia and Herzegovina" ||
-        cleaned === "Bosnia-Herzegovina" ||
-        cleaned === "Bosnia And Herzegovina"
-      ) {
-        return "Bosnia & Herzegovina";
-      }
-
-      return cleaned;
+      return countryAliases[cleaned] || cleaned;
     }
 
     function getOwners(country) {
       const target = normalizeCountry(country);
-      const owners = [];
-      for (let i = 0; i < drawData.length; i++) {
-        if (normalizeCountry(drawData[i].country) === target) {
-          owners.push(drawData[i].participant);
-        }
-      }
-      return owners;
+      return drawData
+        .filter(x => normalizeCountry(x.country) === target)
+        .map(x => x.participant);
+    }
+
+    function getOwnerText(country) {
+      const owners = getOwners(country);
+      return owners.length ? owners.join(", ") : "No owner";
     }
 
     function formatStatus(status) {
@@ -359,42 +369,31 @@ Live knockout bracket updated automatically.
     function formatKickoff(utcDate) {
       if (!utcDate) return "";
       try {
-        const d = new Date(utcDate);
-        return d.toLocaleString("en-GB", {
+        return new Date(utcDate).toLocaleString("en-GB", {
           timeZone: "Europe/London",
-          day: "2-digit",
-          month: "short",
-          hour: "2-digit",
-          minute: "2-digit"
+          day: "2-digit", month: "short",
+          hour: "2-digit", minute: "2-digit"
         });
-      } catch (e) {
-        return "";
-      }
+      } catch (e) { return ""; }
     }
 
-    function getScoreValue(match, side) {
-      if (!match || !match.score) return "-";
+    function getScore(match, side) {
+      if (!match?.score) return "-";
+      if (match.status === "TIMED" || match.status === "SCHEDULED") return "-";
+      return (
+        match.score.fullTime?.[side] ??
+        match.score.regularTime?.[side] ??
+        match.score.extraTime?.[side] ??
+        "-"
+      );
+    }
 
-      if (match.status === "TIMED" || match.status === "SCHEDULED") {
-        return "-";
-      }
-
-      const score = match.score;
-      const candidates = [
-        score.fullTime,
-        score.regularTime,
-        score.extraTime,
-        score.halfTime
-      ];
-
-      for (let i = 0; i < candidates.length; i++) {
-        const part = candidates[i];
-        if (part && part[side] !== null && part[side] !== undefined) {
-          return part[side];
-        }
-      }
-
-      return "-";
+    function statusBadge(status) {
+      if (status === "IN_PLAY" || status === "PAUSED")
+        return '<span class="badge live">LIVE</span>';
+      if (status === "FINISHED")
+        return '<span class="badge finished">FT</span>';
+      return '<span class="badge scheduled">Scheduled</span>';
     }
 
     function getMatchTime(match) {
@@ -402,170 +401,164 @@ Live knockout bracket updated automatically.
       return Number.isFinite(t) ? t : 0;
     }
 
-    function renderDraws() {
-      const container = document.getElementById("draw-results");
-      let html = "";
+    // ── Draw cards ─────────────────────────────────────────────
 
-      for (let i = 0; i < drawData.length; i++) {
-        const item = drawData[i];
-        html += `
+    function renderDraws() {
+      document.getElementById("draw-results").innerHTML = drawData
+        .map(item => `
           <div class="card">
             <div class="country">${item.country}</div>
             <div class="participant">${item.participant}</div>
-          </div>
-        `;
-      }
+          </div>`)
+        .join("");
+    }
 
-      container.innerHTML = html;
+    // ── Match Results (list) ───────────────────────────────────
+
+    function pickMatches(matches) {
+      const finished = matches
+        .filter(m => m.status === "FINISHED")
+        .sort((a, b) => getMatchTime(b) - getMatchTime(a))
+        .slice(0, 8)
+        .sort((a, b) => getMatchTime(a) - getMatchTime(b));
+      const live = matches
+        .filter(m => m.status === "IN_PLAY" || m.status === "PAUSED")
+        .sort((a, b) => getMatchTime(a) - getMatchTime(b));
+      const upcoming = matches
+        .filter(m => m.status === "TIMED" || m.status === "SCHEDULED")
+        .sort((a, b) => getMatchTime(a) - getMatchTime(b))
+        .slice(0, 6);
+      return [...finished, ...live, ...upcoming];
     }
 
     function renderFallbackMatches(noteText) {
       const container = document.getElementById("match-results");
-      let html = "";
-
-      if (noteText) {
-        html += `<div class="message error">${noteText}</div>`;
-      }
-
-      for (let i = 0; i < fallbackMatches.length; i++) {
-        const match = fallbackMatches[i];
-        const homeOwnerText = getOwners(match.homeTeam).join(", ") || "No owner";
-        const awayOwnerText = getOwners(match.awayTeam).join(", ") || "No owner";
-
+      let html = noteText ? `<div class="message error">${noteText}</div>` : "";
+      for (const match of fallbackMatches) {
         html += `
           <div class="match-item">
             <div class="match-line">
               <div class="team-left">
                 <span class="team-name">${match.homeTeam}</span>
-                <span class="owner">(${homeOwnerText})</span>
+                <span class="owner">(${getOwnerText(match.homeTeam)})</span>
               </div>
-
-              <div class="score">${match.homeScore} : ${match.awayScore}</div>
-
+              <div class="score-inline">${match.homeScore} : ${match.awayScore}</div>
               <div class="team-right">
                 <span class="team-name">${match.awayTeam}</span>
-                <span class="owner">(${awayOwnerText})</span>
+                <span class="owner">(${getOwnerText(match.awayTeam)})</span>
               </div>
             </div>
             <div class="status">Status: ${match.status}</div>
             <div class="meta">${match.meta}</div>
-          </div>
-        `;
+          </div>`;
       }
-
       container.innerHTML = html;
-    }
-
-    function pickMatches(matches) {
-      const liveStatuses = ["IN_PLAY", "PAUSED"];
-      const finishedStatuses = ["FINISHED"];
-      const upcomingStatuses = ["TIMED", "SCHEDULED"];
-
-      const finished = matches
-        .filter(match => finishedStatuses.includes(match.status))
-        .sort((a, b) => getMatchTime(b) - getMatchTime(a))
-        .slice(0, 8)
-        .sort((a, b) => getMatchTime(a) - getMatchTime(b));
-
-      const live = matches
-        .filter(match => liveStatuses.includes(match.status))
-        .sort((a, b) => getMatchTime(a) - getMatchTime(b));
-
-      const upcoming = matches
-        .filter(match => upcomingStatuses.includes(match.status))
-        .sort((a, b) => getMatchTime(a) - getMatchTime(b))
-        .slice(0, 6);
-
-      return [...finished, ...live, ...upcoming];
     }
 
     function renderApiMatches(matches) {
       const container = document.getElementById("match-results");
-
       if (!matches || matches.length === 0) {
         renderFallbackMatches("No World Cup matches returned from API. Showing sample matches instead.");
         return;
       }
-
       let html = "";
-
-      for (let i = 0; i < matches.length; i++) {
-        const match = matches[i];
-        const homeNameRaw = match.homeTeam?.name || "Home team";
-        const awayNameRaw = match.awayTeam?.name || "Away team";
-
-        const homeName = normalizeCountry(homeNameRaw);
-        const awayName = normalizeCountry(awayNameRaw);
-
-        const homeOwnerText = getOwners(homeName).join(", ") || "No owner";
-        const awayOwnerText = getOwners(awayName).join(", ") || "No owner";
-
-        const homeScore = getScoreValue(match, "home");
-        const awayScore = getScoreValue(match, "away");
-
+      for (const match of matches) {
+        const homeName = normalizeCountry(match.homeTeam?.name);
+        const awayName = normalizeCountry(match.awayTeam?.name);
         const metaText = [
           formatKickoff(match.utcDate),
           match.group ? `Group ${match.group}` : "",
           match.stage || ""
         ].filter(Boolean).join(" · ");
-
         html += `
           <div class="match-item">
             <div class="match-line">
               <div class="team-left">
                 <span class="team-name">${homeName}</span>
-                <span class="owner">(${homeOwnerText})</span>
+                <span class="owner">(${getOwnerText(homeName)})</span>
               </div>
-
-              <div class="score">${homeScore} : ${awayScore}</div>
-
+              <div class="score-inline">${getScore(match, "home")} : ${getScore(match, "away")}</div>
               <div class="team-right">
                 <span class="team-name">${awayName}</span>
-                <span class="owner">(${awayOwnerText})</span>
+                <span class="owner">(${getOwnerText(awayName)})</span>
               </div>
             </div>
             <div class="status">Status: ${formatStatus(match.status)}</div>
             <div class="meta">${metaText}</div>
-          </div>
-        `;
+          </div>`;
       }
-
       container.innerHTML = html;
     }
 
+    // ── Bracket ────────────────────────────────────────────────
+
+    function renderBracketMatch(match) {
+      const home = normalizeCountry(match.homeTeam?.name);
+      const away = normalizeCountry(match.awayTeam?.name);
+      return `
+        <div class="match">
+          <div class="team">
+            <div class="left">
+              <div class="country">${home}</div>
+              <div class="owner">${getOwnerText(home)}</div>
+            </div>
+            <div class="score">${getScore(match, "home")}</div>
+          </div>
+          <div class="team">
+            <div class="left">
+              <div class="country">${away}</div>
+              <div class="owner">${getOwnerText(away)}</div>
+            </div>
+            <div class="score">${getScore(match, "away")}</div>
+          </div>
+          <div class="footer">
+            <div>${formatKickoff(match.utcDate)}</div>
+            <div>${statusBadge(match.status)}</div>
+          </div>
+        </div>`;
+    }
+
+    function renderBracketStage(matches, stage, id) {
+      const html = matches
+        .filter(m => m.stage === stage)
+        .sort((a, b) => new Date(a.utcDate) - new Date(b.utcDate))
+        .map(renderBracketMatch)
+        .join("");
+      document.getElementById(id).innerHTML =
+        html || '<div class="empty">No matches yet.</div>';
+    }
+
+    // ── Main fetch ─────────────────────────────────────────────
+
     async function fetchWorldCupMatches() {
       renderDraws();
-
       if (!API_URL) {
         renderFallbackMatches("API URL is missing. Showing sample matches instead.");
         return;
       }
-
       try {
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 10000);
-
-        const response = await fetch(API_URL, {
-          method: "GET",
-          signal: controller.signal
-        });
-
+        const response = await fetch(API_URL, { signal: controller.signal });
         clearTimeout(timeoutId);
 
         if (!response.ok) {
-          const errorText = await response.text();
-          console.error("Worker HTTP error:", response.status, errorText);
+          console.error("Worker HTTP error:", response.status, await response.text());
           renderFallbackMatches("Worker/API request failed. Showing sample matches instead.");
           return;
         }
 
         const data = await response.json();
-        console.log("Worker response:", data);
-
         const matches = Array.isArray(data.matches) ? data.matches : [];
-        const selectedMatches = pickMatches(matches);
 
-        renderApiMatches(selectedMatches);
+        renderApiMatches(pickMatches(matches));
+
+        renderBracketStage(matches, "LAST_32",        "r32");
+        renderBracketStage(matches, "LAST_16",        "r16");
+        renderBracketStage(matches, "QUARTER_FINALS", "qf");
+        renderBracketStage(matches, "SEMI_FINALS",    "sf");
+        renderBracketStage(matches, "FINAL",          "final");
+
       } catch (error) {
         console.error("Failed to fetch Worker data:", error);
         renderFallbackMatches("Could not load API data. Showing sample matches instead.");
