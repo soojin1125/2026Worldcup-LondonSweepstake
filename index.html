@@ -276,10 +276,50 @@
 
 <h2>Knockout Stage</h2>
 
-<iframe
-    src="bracket.html"
-    class="bracket-frame">
-</iframe>
+<div class="section-note">
+Follow the knockout stage as teams progress towards the final.
+</div>
+
+<div class="stage">
+
+    <h3>Round of 32</h3>
+    <div class="grid" id="r32"></div>
+
+</div>
+
+<div class="stage">
+
+    <h3>Round of 16</h3>
+    <div class="grid" id="r16"></div>
+
+</div>
+
+<div class="stage">
+
+    <h3>Quarter-finals</h3>
+    <div class="grid" id="qf"></div>
+
+</div>
+
+<div class="stage">
+
+    <h3>Semi-finals</h3>
+    <div class="grid" id="sf"></div>
+
+</div>
+
+<div class="stage">
+
+    <h3>
+        Final
+        <span class="bts-note">
+            💜 Halftime Show: BTS & Friends
+        </span>
+    </h3>
+
+    <div class="grid" id="final"></div>
+
+</div>
     
     <h2>Draw Results</h2>
     <div class="cards" id="draw-results"></div>
@@ -631,7 +671,78 @@ const matches = Array.isArray(data.matches) ? data.matches : [];
 const selectedMatches = pickMatches(matches);
 
 renderApiMatches(selectedMatches);
+function renderBracketMatch(match){
 
+    const home = normalizeCountry(match.homeTeam?.name || "TBD");
+    const away = normalizeCountry(match.awayTeam?.name || "TBD");
+
+    const homeOwner = getOwners(home).join(", ") || "No owner";
+    const awayOwner = getOwners(away).join(", ") || "No owner";
+
+    return `
+
+<div class="match">
+
+    <div class="team">
+
+        <div class="left">
+
+            <div class="country">${home}</div>
+
+            <div class="owner">${homeOwner}</div>
+
+        </div>
+
+        <div class="score">${getScoreValue(match,"home")}</div>
+
+    </div>
+
+    <div class="team">
+
+        <div class="left">
+
+            <div class="country">${away}</div>
+
+            <div class="owner">${awayOwner}</div>
+
+        </div>
+
+        <div class="score">${getScoreValue(match,"away")}</div>
+
+    </div>
+
+    <div class="footer">
+
+        <div>${formatKickoff(match.utcDate)}</div>
+
+        <div>${formatStatus(match.status)}</div>
+
+    </div>
+
+</div>
+
+`;
+
+}
+
+function renderBracketStage(matches, stage, id){
+
+    const html = matches
+
+        .filter(m => m.stage === stage)
+
+        .sort((a,b)=>new Date(a.utcDate)-new Date(b.utcDate))
+
+        .map(renderBracketMatch)
+
+        .join("");
+
+    document.getElementById(id).innerHTML =
+        html || '<div class="message">No matches yet.</div>';
+
+}
+        
+        
 // ===== Summary cards =====
 
 const today = new Date().toISOString().slice(0,10);
