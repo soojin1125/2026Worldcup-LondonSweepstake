@@ -52,14 +52,33 @@ h1{
 }
 
 .match{
+    position:relative;
     width:240px;
     background:white;
     border-radius:10px;
     box-shadow:0 2px 5px rgba(0,0,0,.12);
     margin:10px 0;
-    overflow:hidden;
+    overflow:visible;
 }
 
+.match::after{
+    content:"";
+    position:absolute;
+    right:-40px;
+    top:50%;
+    width:40px;
+    border-top:2px solid #cbd5e1;
+}
+
+.round:not(:last-child) .match::before{
+    content:"";
+    position:absolute;
+    right:-40px;
+    top:50%;
+    height:70px;
+    border-right:2px solid #cbd5e1;
+}
+    
 .team{
     padding:10px 14px;
     border-bottom:1px solid #eee;
@@ -101,7 +120,25 @@ h1{
     padding:2px 4px;
 }
 
+.round32 .match{
+    margin-bottom:20px;
+}
 
+.round16 .match{
+    margin:95px 0;
+}
+
+.quarter .match{
+    margin:235px 0;
+}
+
+.semi .match{
+    margin:515px 0;
+}
+
+.final .match{
+    margin:1080px 0;
+}
 
     
 </style>
@@ -117,27 +154,27 @@ h1{
 
 <div class="round">
 <h2>Round of 32</h2>
-<div class="matches" id="r32"></div>
+<div class="matches round32" id="r32"></div>
 </div>
 
 <div class="round" style="margin-top:120px;">
 <h2>Round of 16</h2>
-<div class="matches" id="r16"></div>
+<div class="matches round16" id="r16"></div>
 </div>
 
 <div class="round" style="margin-top:120px;">
 <h2>Round of 16</h2>
-<div class="matches" id="qf"></div>
+<div class="matches quarter" id="qf"></div>
 </div>
 
 <div class="round" style="margin-top:520px;">
 <h2>Semi-finals</h2>
-<div class="matches" id="sf"></div>
+<div class="matches semi" id="sf"></div>
 </div>
 
 <div class="round" style="margin-top:780px;">
 <h2>Final</h2>
-<div class="matches" id="final"></div>
+<div class="matches final" id="final"></div>
 </div>
 
 </div>
