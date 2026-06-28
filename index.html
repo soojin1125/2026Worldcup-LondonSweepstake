@@ -172,6 +172,26 @@
     .scheduled { background: #e0e7ff; color: #3730a3; }
     .empty { color: #9ca3af; padding: 20px; }
 
+    /* LIVE badge pulse */
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50%       { opacity: 0.5; }
+    }
+    .badge.live { animation: pulse 1.4s ease-in-out infinite; }
+
+    /* Bracket: winning team row */
+    .team.winner { background: #f0fdf4; }
+    .team.winner .score { color: #166534; }
+
+    /* Draw card: eliminated team */
+    .card.eliminated {
+      background: #f3f4f6;
+      border-color: #e5e7eb;
+      opacity: 0.6;
+    }
+    .card.eliminated .country { color: #6b7280; }
+    .card.eliminated .participant { color: #9ca3af; }
+
     .bts-note {
       font-size: 14px;
       font-weight: 500;
@@ -236,6 +256,9 @@
 
     <!-- Draw Results -->
     <h2>Draw Results</h2>
+    <div class="section-note">
+      Cards with a grey background have been eliminated from the tournament.
+    </div>
     <div class="cards" id="draw-results"></div>
 
     <div class="footer-note">Built by Soojin Choe over lunch</div>
@@ -401,15 +424,102 @@
       return Number.isFinite(t) ? t : 0;
     }
 
+    // ── Eliminated teams ───────────────────────────────────────
+
+    // Group stage: 4th place out; bottom 4 thirds out once all 12 groups done
+    // (2026 WC format: top 2 from each group + best 8 third-placed = 32 advance)
+    function getGroupStageEliminated(matches) {
+      const groupMatches = matches.filter(m => m.stage === "GROUP_STAGE");
+
+      const byGroup = {};
+      for (const m of groupMatches) {
+        if (!m.group) continue;
+        (byGroup[m.group] = byGroup[m.group] || []).push(m);
+      }
+
+      const eliminated = new Set();
+      const thirdPlace = []; // collect 3rd-place teams from completed groups
+
+      for (const gMatches of Object.values(byGroup)) {
+        const stats = {};
+        for (const m of gMatches) {
+          const home = normalizeCountry(m.homeTeam?.name);
+          const away = normalizeCountry(m.awayTeam?.name);
+          if (!stats[home]) stats[home] = { pts: 0, gf: 0, ga: 0 };
+          if (!stats[away]) stats[away] = { pts: 0, gf: 0, ga: 0 };
+
+          if (m.status !== "FINISHED") continue;
+          const hg = m.score?.fullTime?.home ?? m.score?.regularTime?.home ?? 0;
+          const ag = m.score?.fullTime?.away ?? m.score?.regularTime?.away ?? 0;
+
+          stats[home].gf += hg; stats[home].ga += ag;
+          stats[away].gf += ag; stats[away].ga += hg;
+          if (hg > ag)      { stats[home].pts += 3; }
+          else if (ag > hg) { stats[away].pts += 3; }
+          else              { stats[home].pts += 1; stats[away].pts += 1; }
+        }
+
+        const n = Object.keys(stats).length;
+        const totalMatches = n * (n - 1) / 2;
+        const finished = gMatches.filter(m => m.status === "FINISHED").length;
+        if (finished < totalMatches || n < 4) continue; // group not done yet
+
+        const teams = Object.entries(stats)
+          .map(([name, s]) => ({ name, ...s, gd: s.gf - s.ga }))
+          .sort((a, b) => b.pts - a.pts || b.gd - a.gd || b.gf - a.gf);
+
+        eliminated.add(teams[3].name); // 4th place always out
+        thirdPlace.push(teams[2]);     // collect 3rd place for ranking
+      }
+
+      // Once all 12 groups are done, bottom 4 thirds are also out
+      if (thirdPlace.length === 12) {
+        thirdPlace.sort((a, b) => b.pts - a.pts || b.gd - a.gd || b.gf - a.gf);
+        for (let i = 8; i < 12; i++) eliminated.add(thirdPlace[i].name);
+      }
+
+      return eliminated;
+    }
+
+    // Knockout stage: loser of each finished match is out
+    function getKnockoutEliminated(matches) {
+      const knockoutStages = ["LAST_32", "LAST_16", "QUARTER_FINALS", "SEMI_FINALS", "FINAL"];
+      const eliminated = new Set();
+      for (const m of matches) {
+        if (!knockoutStages.includes(m.stage)) continue;
+        if (m.status !== "FINISHED") continue;
+        const hg = m.score?.fullTime?.home ?? m.score?.regularTime?.home;
+        const ag = m.score?.fullTime?.away ?? m.score?.regularTime?.away;
+        if (hg == null || ag == null) continue;
+        const home = normalizeCountry(m.homeTeam?.name);
+        const away = normalizeCountry(m.awayTeam?.name);
+        const hp = m.score?.penalties?.home;
+        const ap = m.score?.penalties?.away;
+        const homeWins = hp != null ? hp > ap : hg > ag;
+        eliminated.add(homeWins ? away : home);
+      }
+      return eliminated;
+    }
+
+    function getEliminatedTeams(matches) {
+      return new Set([
+        ...getGroupStageEliminated(matches),
+        ...getKnockoutEliminated(matches)
+      ]);
+    }
+
     // ── Draw cards ─────────────────────────────────────────────
 
-    function renderDraws() {
+    function renderDraws(eliminated = new Set()) {
       document.getElementById("draw-results").innerHTML = drawData
-        .map(item => `
-          <div class="card">
-            <div class="country">${item.country}</div>
+        .map(item => {
+          const isOut = eliminated.has(normalizeCountry(item.country));
+          return `
+          <div class="card${isOut ? " eliminated" : ""}">
+            <div class="country">${item.country}${isOut ? " ✕" : ""}</div>
             <div class="participant">${item.participant}</div>
-          </div>`)
+          </div>`;
+        })
         .join("");
     }
 
@@ -492,19 +602,34 @@
 
     // ── Bracket ────────────────────────────────────────────────
 
+    function bracketWinner(match) {
+      // Returns "home", "away", or null if undecided
+      if (match.status !== "FINISHED") return null;
+      const hp = match.score?.penalties?.home;
+      const ap = match.score?.penalties?.away;
+      if (hp != null) return hp > ap ? "home" : "away";
+      const hg = match.score?.fullTime?.home ?? match.score?.regularTime?.home;
+      const ag = match.score?.fullTime?.away ?? match.score?.regularTime?.away;
+      if (hg == null || ag == null) return null;
+      if (hg > ag) return "home";
+      if (ag > hg) return "away";
+      return null;
+    }
+
     function renderBracketMatch(match) {
       const home = normalizeCountry(match.homeTeam?.name);
       const away = normalizeCountry(match.awayTeam?.name);
+      const winner = bracketWinner(match);
       return `
         <div class="match">
-          <div class="team">
+          <div class="team${winner === "home" ? " winner" : ""}">
             <div class="left">
               <div class="country">${home}</div>
               <div class="owner">${getOwnerText(home)}</div>
             </div>
             <div class="score">${getScore(match, "home")}</div>
           </div>
-          <div class="team">
+          <div class="team${winner === "away" ? " winner" : ""}">
             <div class="left">
               <div class="country">${away}</div>
               <div class="owner">${getOwnerText(away)}</div>
@@ -531,7 +656,7 @@
     // ── Main fetch ─────────────────────────────────────────────
 
     async function fetchWorldCupMatches() {
-      renderDraws();
+      renderDraws(); // initial render with no eliminations
       if (!API_URL) {
         renderFallbackMatches("API URL is missing. Showing sample matches instead.");
         return;
@@ -558,6 +683,9 @@
         renderBracketStage(matches, "QUARTER_FINALS", "qf");
         renderBracketStage(matches, "SEMI_FINALS",    "sf");
         renderBracketStage(matches, "FINAL",          "final");
+
+        // Re-render draw cards now that we know who's eliminated
+        renderDraws(getEliminatedTeams(matches));
 
       } catch (error) {
         console.error("Failed to fetch Worker data:", error);
