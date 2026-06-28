@@ -243,9 +243,19 @@ function renderMatch(match){
             <div class="score">${score(match,"away")}</div>
         </div>
 
-        <div class="status">
-            ${match.status}
-        </div>
+const kickoff = new Date(match.utcDate).toLocaleString("en-GB",{
+    timeZone:"Europe/London",
+    day:"2-digit",
+    month:"short",
+    hour:"2-digit",
+    minute:"2-digit"
+});
+
+...
+
+<div class="status">
+    ${kickoff} • ${match.status}
+</div>
 
     </div>
     `;
@@ -255,7 +265,15 @@ function renderStage(matches, stage, id){
 
     const html = matches
         .filter(m => m.stage === stage)
-        .sort((a,b)=>new Date(a.utcDate)-new Date(b.utcDate))
+       .sort((a,b)=>{
+
+    if(a.utcDate===b.utcDate){
+        return a.id-b.id;
+    }
+
+    return new Date(a.utcDate)-new Date(b.utcDate);
+
+})
         .map(renderMatch)
         .join("");
 
