@@ -20,15 +20,18 @@ h1{
 }
 
 .wrapper{
-    width:max-content;
-    margin:auto;
-    padding:30px;
+    width:100%;
+    overflow-x:auto;
+    padding:30px 20px;
+    box-sizing:border-box;
 }
 
 .bracket{
     display:flex;
-    gap:60px;
+    gap:80px;
     align-items:flex-start;
+    width:max-content;
+    margin:auto;
 }
 
 .round{
@@ -77,20 +80,6 @@ h1{
 
 .score{
     font-weight:bold;
-}
-
-.bracket{
-    display:flex;
-    gap:40px;
-    overflow-x:auto;
-    padding:20px;
-}
-
-.round{
-    display:flex;
-    flex-direction:column;
-    justify-content:space-around;
-    min-width:240px;
 }
 
 .round-title{
