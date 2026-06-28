@@ -1,10 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>World Cup Knockout Bracket</title>
+<title>World Cup Knockout Stage</title>
 
 <style>
 
@@ -14,175 +16,115 @@ body{
     font-family:Arial,sans-serif;
 }
 
+.container{
+    max-width:1400px;
+    margin:auto;
+    padding:30px;
+}
+
 h1{
     text-align:center;
-    margin:30px 0;
+    margin-bottom:40px;
 }
 
-.wrapper{
-    width:100%;
-    overflow-x:auto;
-    padding:30px 20px;
-    box-sizing:border-box;
+.stage{
+    margin-bottom:50px;
 }
 
-.bracket{
-    display:flex;
-    gap:80px;
-    align-items:flex-start;
-    width:max-content;
-    margin:auto;
-}
-
-.round{
-    display:flex;
-    flex-direction:column;
-    min-width:260px;
-}
-
-.round h2{
-    text-align:center;
+.stage h2{
     margin-bottom:20px;
+    color:#111827;
 }
 
-.matches{
-    display:flex;
-    flex-direction:column;
-    gap:28px;
+.grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(280px,1fr));
+    gap:18px;
 }
 
 .match{
-    position:relative;
-    width:240px;
     background:white;
-    border-radius:10px;
-    box-shadow:0 2px 5px rgba(0,0,0,.12);
-    margin:10px 0;
-    overflow:visible;
+    border-radius:14px;
+    box-shadow:0 2px 8px rgba(0,0,0,.08);
+    overflow:hidden;
 }
 
-.match::after{
-    content:"";
-    position:absolute;
-    right:-40px;
-    top:50%;
-    width:40px;
-    border-top:2px solid #cbd5e1;
-}
-
-.round:not(:last-child) .match::before{
-    content:"";
-    position:absolute;
-    right:-40px;
-    top:50%;
-    height:70px;
-    border-right:2px solid #cbd5e1;
-}
-    
 .team{
-    padding:10px 14px;
-    border-bottom:1px solid #eee;
     display:flex;
     justify-content:space-between;
+    align-items:center;
+    padding:14px 18px;
 }
 
-.team:last-child{
-    border-bottom:none;
+.team:first-child{
+    border-bottom:1px solid #ececec;
 }
 
-.name{
+.left{
+    display:flex;
+    flex-direction:column;
+}
+
+.country{
     font-weight:bold;
+    font-size:17px;
 }
 
 .owner{
     color:#777;
-    font-size:12px;
+    font-size:13px;
+    margin-top:3px;
 }
 
 .score{
-    font-weight:bold;
-}
-
-.round-title{
-    text-align:center;
     font-size:20px;
     font-weight:bold;
-    margin-bottom:20px;
 }
 
-.team:first-child{
-    border-bottom:1px solid #eee;
+.status{
+    padding:10px 18px;
+    background:#f8fafc;
+    color:#666;
+    font-size:13px;
+    border-top:1px solid #ececec;
 }
 
-.winner{
-    background:#dcfce7;
-    border-radius:4px;
-    padding:2px 4px;
-}
-
-.round32 .match{
-    margin-bottom:20px;
-}
-
-.round16 .match{
-    margin:95px 0;
-}
-
-.quarter .match{
-    margin:235px 0;
-}
-
-.semi .match{
-    margin:515px 0;
-}
-
-.final .match{
-    margin:1080px 0;
-}
-
-    
 </style>
+
 </head>
 
 <body>
 
+<div class="container">
+
 <h1>🏆 World Cup Knockout Stage</h1>
 
-<div class="wrapper">
-
-<div class="bracket">
-
-<div class="round">
+<div class="stage">
 <h2>Round of 32</h2>
-<div class="matches round32" id="r32"></div>
+<div class="grid" id="r32"></div>
 </div>
 
-<div class="round">
+<div class="stage">
 <h2>Round of 16</h2>
-<div class="matches round16" id="r16"></div>
+<div class="grid" id="r16"></div>
 </div>
 
-<div class="round">
+<div class="stage">
 <h2>Quarter-finals</h2>
-<div class="matches quarter" id="qf"></div>
+<div class="grid" id="qf"></div>
 </div>
 
-<div class="round">
+<div class="stage">
 <h2>Semi-finals</h2>
-<div class="matches semi" id="sf"></div>
+<div class="grid" id="sf"></div>
 </div>
 
-<div class="round">
+<div class="stage">
 <h2>Final</h2>
-<div class="matches final" id="final"></div>
-</div>
-
-</div>
-
+<div class="grid" id="final"></div>
 </div>
 
 <script>
-
 
 const API_URL = "https://worldcup-api-proxy.choe-soojin.workers.dev";
 
@@ -237,32 +179,30 @@ const drawData = [
   { participant:"Tim Hewer", country:"Paraguay"}
 ];
 
-const aliases={
-"Korea Republic":"Korea",
-"Republic of Korea":"Korea",
-"South Korea":"Korea",
-"IR Iran":"Iran",
-"Turkey":"Türkiye",
-"United States of America":"United States",
-"Curaçao":"Curacao",
-"Bosnia and Herzegovina":"Bosnia & Herzegovina",
-"Cote d'Ivoire":"Côte d’Ivoire",
-"Ivory Coast":"Côte d’Ivoire",
-"Cape Verde":"Cabo Verde",
-"DR Congo":"Congo (DRC)"
+const aliases = {
+  "Korea Republic":"Korea",
+  "Republic of Korea":"Korea",
+  "South Korea":"Korea",
+  "IR Iran":"Iran",
+  "Turkey":"Türkiye",
+  "United States of America":"United States",
+  "Curaçao":"Curacao",
+  "Bosnia and Herzegovina":"Bosnia & Herzegovina",
+  "Cote d'Ivoire":"Côte d’Ivoire",
+  "Ivory Coast":"Côte d’Ivoire",
+  "Cape Verde":"Cabo Verde",
+  "DR Congo":"Congo (DRC)"
 };
 
 function normalize(name){
-    return aliases[name] || name;
+    return aliases[name] || name || "TBD";
 }
 
 function owner(country){
-    country=normalize(country);
-    const list=drawData
-        .filter(x=>normalize(x.country)==country)
-        .map(x=>x.participant);
-
-    return list.join(", ");
+    return drawData
+        .filter(x => normalize(x.country) === normalize(country))
+        .map(x => x.participant)
+        .join(", ");
 }
 
 function score(match, side){
@@ -281,53 +221,75 @@ function score(match, side){
 
 function renderMatch(match){
 
-    const home=normalize(match.homeTeam?.name || "TBD");
-    const away=normalize(match.awayTeam?.name || "TBD");
+    const home = normalize(match.homeTeam?.name);
+    const away = normalize(match.awayTeam?.name);
 
     return `
-<div class="match">
-    <div class="team">
-        <div>
-            <div class="name">${home}</div>
-            <div class="owner">${owner(home)}</div>
-        </div>
-        <div class="score">${score(match,"home")}</div>
-    </div>
+    <div class="match">
 
-    <div class="team">
-        <div>
-            <div class="name">${away}</div>
-            <div class="owner">${owner(away)}</div>
+        <div class="team">
+            <div class="left">
+                <div class="country">${home}</div>
+                <div class="owner">${owner(home) || "No owner"}</div>
+            </div>
+            <div class="score">${score(match,"home")}</div>
         </div>
-        <div class="score">${score(match,"away")}</div>
+
+        <div class="team">
+            <div class="left">
+                <div class="country">${away}</div>
+                <div class="owner">${owner(away) || "No owner"}</div>
+            </div>
+            <div class="score">${score(match,"away")}</div>
+        </div>
+
+        <div class="status">
+            ${match.status}
+        </div>
+
     </div>
-</div>
-`;
+    `;
 }
 
-function renderStage(matches, stage, elementId){
+function renderStage(matches, stage, id){
 
-    const html=matches
-        .filter(m=>m.stage===stage)
+    const html = matches
+        .filter(m => m.stage === stage)
         .sort((a,b)=>new Date(a.utcDate)-new Date(b.utcDate))
         .map(renderMatch)
         .join("");
 
-    document.getElementById(elementId).innerHTML=html;
+    document.getElementById(id).innerHTML =
+        html || "<p>No matches yet.</p>";
 }
 
 async function loadBracket(){
 
-    const res=await fetch(API_URL);
-    const data=await res.json();
+    try{
 
-    const matches=data.matches || [];
+        const response = await fetch(API_URL);
 
-    renderStage(matches,"LAST_32","r32");
-    renderStage(matches,"LAST_16","r16");
-    renderStage(matches,"QUARTER_FINALS","qf");
-    renderStage(matches,"SEMI_FINALS","sf");
-    renderStage(matches,"FINAL","final");
+        const data = await response.json();
+
+        const matches = data.matches || [];
+
+        renderStage(matches,"LAST_32","r32");
+        renderStage(matches,"LAST_16","r16");
+        renderStage(matches,"QUARTER_FINALS","qf");
+        renderStage(matches,"SEMI_FINALS","sf");
+        renderStage(matches,"FINAL","final");
+
+    }
+    catch(err){
+
+        console.error(err);
+
+        document.querySelectorAll(".grid").forEach(g=>{
+            g.innerHTML="<p>Unable to load matches.</p>";
+        });
+
+    }
+
 }
 
 loadBracket();
@@ -335,4 +297,5 @@ loadBracket();
 </script>
 
 </body>
+
 </html>
