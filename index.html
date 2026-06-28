@@ -191,147 +191,13 @@
     background:white;
 }
 
-    .summary-cards{
-    display:grid;
-    grid-template-columns:repeat(3,1fr);
-    gap:16px;
-    margin:28px 0 34px;
-}
-
-.summary-card{
-    background:white;
-    border:1px solid #e5e7eb;
-    border-radius:14px;
-    padding:18px;
-}
-
-.summary-title{
-    font-size:14px;
-    color:#6b7280;
-    margin-bottom:10px;
-}
-
-.summary-value{
-    font-size:26px;
-    font-weight:700;
-    color:#1e3a8a;
-}
-
-@media(max-width:700px){
-
-.summary-cards{
-    grid-template-columns:1fr;
-}
-
-.summary-value{
-    font-size:24px;
-}
-
-}
-
-.summary-progress{
-    margin-top:8px;
-    font-size:14px;
-    color:#6b7280;
-}
-
-.stage{
-    margin-bottom:40px;
-}
-
-.stage h3{
-    margin:0 0 16px;
-    font-size:24px;
-    color:#111827;
-}
-
-.grid{
-    display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
-    gap:18px;
-}
-
-.match{
-    background:white;
-    border:1px solid #e5e7eb;
-    border-radius:14px;
-    overflow:hidden;
-}
-
-.team{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    padding:14px 18px;
-}
-
-.team:first-child{
-    border-bottom:1px solid #ececec;
-}
-
-.left{
-    display:flex;
-    flex-direction:column;
-}
-
-.country{
-    font-weight:700;
-    font-size:17px;
-}
-
-.owner{
-    font-size:13px;
-    color:#6b7280;
-    margin-top:3px;
-}
-
-.footer{
-    display:flex;
-    justify-content:space-between;
-    padding:12px 18px;
-    background:#f9fafb;
-    font-size:13px;
-    color:#6b7280;
-}
-
-.bts-note{
-    font-size:14px;
-    font-weight:500;
-    color:#7c3aed;
-    margin-left:8px;
-}
     
   </style>
 </head>
 <body>
   <div class="container">
     <h1>🏆 World Cup Sweepstake</h1>
-<div class="summary-cards">
 
-  <div class="summary-card">
-    <div class="summary-title">Matches Today</div>
-    <div class="summary-value" id="today-count">-</div>
-  </div>
-
-  <div class="summary-card">
-    <div class="summary-title">Live</div>
-    <div class="summary-value" id="live-count">-</div>
-  </div>
-
-<div class="summary-card">
-    <div class="summary-title">Current Stage</div>
-
-    <div class="summary-value" id="current-stage">
-        -
-    </div>
-
-    <div class="summary-progress" id="current-progress">
-        -
-    </div>
-
-</div>
-
-</div>
     <h2>Match Results by Team Owner</h2>
     <div class="section-note">
       Showing the latest 8 finished matches first, then all live matches, followed by the next 6 upcoming matches in chronological order.
@@ -343,49 +209,13 @@
 <h2>Knockout Stage</h2>
 
 <div class="section-note">
-Follow the knockout stage as teams progress towards the final.
+Live knockout bracket updated automatically.
 </div>
 
-<div class="stage">
-
-    <h3>Round of 32</h3>
-    <div class="grid" id="r32"></div>
-
-</div>
-
-<div class="stage">
-
-    <h3>Round of 16</h3>
-    <div class="grid" id="r16"></div>
-
-</div>
-
-<div class="stage">
-
-    <h3>Quarter-finals</h3>
-    <div class="grid" id="qf"></div>
-
-</div>
-
-<div class="stage">
-
-    <h3>Semi-finals</h3>
-    <div class="grid" id="sf"></div>
-
-</div>
-
-<div class="stage">
-
-    <h3>
-        Final
-        <span class="bts-note">
-            💜 Halftime Show: BTS & Friends
-        </span>
-    </h3>
-
-    <div class="grid" id="final"></div>
-
-</div>
+<iframe
+    src="bracket.html"
+    class="bracket-frame">
+</iframe>
     
     <h2>Draw Results</h2>
     <div class="cards" id="draw-results"></div>
@@ -732,143 +562,10 @@ Follow the knockout stage as teams progress towards the final.
         const data = await response.json();
         console.log("Worker response:", data);
 
-const matches = Array.isArray(data.matches) ? data.matches : [];
+        const matches = Array.isArray(data.matches) ? data.matches : [];
+        const selectedMatches = pickMatches(matches);
 
-const selectedMatches = pickMatches(matches);
-
-renderApiMatches(selectedMatches);
-renderBracketStage(matches, "LAST_32", "r32");
-renderBracketStage(matches, "LAST_16", "r16");
-renderBracketStage(matches, "QUARTER_FINALS", "qf");
-renderBracketStage(matches, "SEMI_FINALS", "sf");
-renderBracketStage(matches, "FINAL", "final");
-function renderBracketMatch(match){
-
-    const home = normalizeCountry(match.homeTeam?.name || "TBD");
-    const away = normalizeCountry(match.awayTeam?.name || "TBD");
-
-    const homeOwner = getOwners(home).join(", ") || "No owner";
-    const awayOwner = getOwners(away).join(", ") || "No owner";
-
-    return `
-
-<div class="match">
-
-    <div class="team">
-
-        <div class="left">
-
-            <div class="country">${home}</div>
-
-            <div class="owner">${homeOwner}</div>
-
-        </div>
-
-        <div class="score">${getScoreValue(match,"home")}</div>
-
-    </div>
-
-    <div class="team">
-
-        <div class="left">
-
-            <div class="country">${away}</div>
-
-            <div class="owner">${awayOwner}</div>
-
-        </div>
-
-        <div class="score">${getScoreValue(match,"away")}</div>
-
-    </div>
-
-    <div class="footer">
-
-        <div>${formatKickoff(match.utcDate)}</div>
-
-        <div>${formatStatus(match.status)}</div>
-
-    </div>
-
-</div>
-
-`;
-
-}
-
-function renderBracketStage(matches, stage, id){
-
-    const html = matches
-
-        .filter(m => m.stage === stage)
-
-        .sort((a,b)=>new Date(a.utcDate)-new Date(b.utcDate))
-
-        .map(renderBracketMatch)
-
-        .join("");
-
-    document.getElementById(id).innerHTML =
-        html || '<div class="message">No matches yet.</div>';
-
-}
-        
-        
-// ===== Summary cards =====
-
-const today = new Date().toISOString().slice(0,10);
-
-const todayCount = matches.filter(m =>
-    m.utcDate.startsWith(today)
-).length;
-
-const liveCount = matches.filter(m =>
-    m.status==="IN_PLAY" || m.status==="PAUSED"
-).length;
-
-const stageOrder = [
-    "FINAL",
-    "SEMI_FINALS",
-    "QUARTER_FINALS",
-    "LAST_16",
-    "LAST_32",
-    "GROUP_STAGE"
-];
-
-let currentStage = "-";
-
-for(const stage of stageOrder){
-
-    if(matches.some(m =>
-        m.status!=="FINISHED" &&
-        m.stage===stage
-    )){
-const stageNames = {
-    GROUP_STAGE: "Group Stage",
-    LAST_32: "Round of 32",
-    LAST_16: "Round of 16",
-    QUARTER_FINALS: "Quarter-finals",
-    SEMI_FINALS: "Semi-finals",
-    FINAL: "Final"
-};
-
-currentStage = stageNames[stage] || stage;
-        break;
-    }
-
-}
-
-document.getElementById("today-count").textContent = todayCount;
-document.getElementById("live-count").textContent = liveCount;
-document.getElementById("current-stage").textContent = currentStage;
-        const currentMatches = matches.filter(m => m.stage === stage);
-
-const finishedMatches = currentMatches.filter(
-    m => m.status === "FINISHED"
-).length;
-
-document.getElementById("current-progress").textContent =
-    `${finishedMatches} / ${currentMatches.length} Matches Complete`;
+        renderApiMatches(selectedMatches);
       } catch (error) {
         console.error("Failed to fetch Worker data:", error);
         renderFallbackMatches("Could not load API data. Showing sample matches instead.");
