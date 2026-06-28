@@ -234,6 +234,72 @@
     font-size:14px;
     color:#6b7280;
 }
+
+.stage{
+    margin-bottom:40px;
+}
+
+.stage h3{
+    margin:0 0 16px;
+    font-size:24px;
+    color:#111827;
+}
+
+.grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
+    gap:18px;
+}
+
+.match{
+    background:white;
+    border:1px solid #e5e7eb;
+    border-radius:14px;
+    overflow:hidden;
+}
+
+.team{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:14px 18px;
+}
+
+.team:first-child{
+    border-bottom:1px solid #ececec;
+}
+
+.left{
+    display:flex;
+    flex-direction:column;
+}
+
+.country{
+    font-weight:700;
+    font-size:17px;
+}
+
+.owner{
+    font-size:13px;
+    color:#6b7280;
+    margin-top:3px;
+}
+
+.footer{
+    display:flex;
+    justify-content:space-between;
+    padding:12px 18px;
+    background:#f9fafb;
+    font-size:13px;
+    color:#6b7280;
+}
+
+.bts-note{
+    font-size:14px;
+    font-weight:500;
+    color:#7c3aed;
+    margin-left:8px;
+}
     
   </style>
 </head>
@@ -671,6 +737,11 @@ const matches = Array.isArray(data.matches) ? data.matches : [];
 const selectedMatches = pickMatches(matches);
 
 renderApiMatches(selectedMatches);
+renderBracketStage(matches, "LAST_32", "r32");
+renderBracketStage(matches, "LAST_16", "r16");
+renderBracketStage(matches, "QUARTER_FINALS", "qf");
+renderBracketStage(matches, "SEMI_FINALS", "sf");
+renderBracketStage(matches, "FINAL", "final");
 function renderBracketMatch(match){
 
     const home = normalizeCountry(match.homeTeam?.name || "TBD");
